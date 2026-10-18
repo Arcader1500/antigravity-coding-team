@@ -9,7 +9,7 @@ context-triggered rules this bundle was extracted from are merged here.
 - The graph auto-updates via a pre-commit hook but can lag, and it never replaces source: the source wins on disagreement. An empty result means "not indexed", not "does not exist".
 
 ## Planning
-- Sequence: clarify (`grilling`), explore (read the codebase with `view_file`/`grep_search`), write spec doc, **checkpoint 1: user/supervisor approves spec**, break into tasks (`writing-plans`), critique (`plan-critic` agent against approved spec until READY), **checkpoint 2: handoff plan**, execute (`orchestrator` / `subagent-driven-development`).
+- Sequence: clarify (`grill-me`), explore (read the codebase with `view_file`/`grep_search`), write spec doc, **checkpoint 1: user/supervisor approves spec**, break into tasks (`writing-plans`), critique (`plan-critic` agent against approved spec until READY), **checkpoint 2: handoff plan**, execute (`orchestrator` / `subagent-driven-development`).
 - Never combine spec writing and task planning into one unpaused step: the spec must be approved before planning tasks. Hard gate: stop and end turn after writing spec.
 - No "coding in markdown": plans specify interface contracts, schemas, and verification commands; code blocks must remain under 40% of plan lines.
 - Grounded symbols: cite verified `file:line` for existing repo functions; never hallucinate or invent helpers.

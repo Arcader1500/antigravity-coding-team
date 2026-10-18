@@ -54,7 +54,7 @@ permissions.sample.json     project-agnostic permission grants (not auto-loaded)
 | `code-reviewer` | five-axis review + verdict | — |
 | `verifier` | runs tests/lint/build, reports evidence | — |
 
-Bundled skills: `subagent-driven-development`, `grilling`, `writing-plans`,
+Bundled skills: `subagent-driven-development`, `grill-me`, `writing-plans`,
 `executing-plans`, `ponytail`, `verification-before-completion`,
 `finishing-a-development-branch`, `code-review-and-quality`.
 
@@ -79,7 +79,7 @@ Removed from the source setup as machine/project-specific: `mcp(daas-cd/*)`,
   a bearer token, `daas-cd` and `code-review-graph` hardcode absolute paths, and
   `undermind` needs OAuth. Configure them globally per machine. Adding an
   `mcp_config.json` here would also tie their lifecycle to this plugin.
-- **`grill-me`, `graphify`, `archify`, `frontend-design`, `systematic-debugging`,
+- **`graphify`, `archify`, `frontend-design`, `systematic-debugging`,
   `test-driven-development`, `receiving-code-review`, `using-git-worktrees`,
   `context7-mcp`.** Not referenced by any bundled agent. Copy the ones you want
   into `skills/` and re-validate.
