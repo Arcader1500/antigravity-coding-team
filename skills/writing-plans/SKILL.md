@@ -51,7 +51,7 @@ Every plan MUST include an `## Execution Waves` section immediately before `## T
   - `**Wave:** N`
   - `**Depends on:** [Task IDs or None]`
   - `**Files Touched:** [exact paths]`
-- **Rule 4 (No Git Hygiene Tasks):** Never create tasks for git branch creation or working-tree cleanup (`git restore`, `git reset`, `git checkout`); workspace state is managed by the orchestrator.
+- **Rule 4 (No Git Hygiene Tasks & Scaffolding Gitignore):** Never create tasks for git branch creation or working-tree cleanup (`git restore`, `git reset`, `git checkout`); workspace state is managed by the orchestrator. When scaffolding a new repository's `.gitignore` (e.g. in Task 1), always include `graphify-out/` and `.agy/` alongside build artifacts and dependencies.
 
 ### 3. Strict 4-Step TDD Sequence (With Static Asset Exception)
 - **For Python / Logic / Route / View Tasks:** Every task MUST explicitly order these 4 steps:

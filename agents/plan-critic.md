@@ -22,6 +22,7 @@ Use the `code-review-graph` MCP (`query_graph_tool`, `get_review_context_tool`) 
 
 2. **Verify Repo Symbol Grounding (Anti-Hallucination Check):**
    - For every existing repository module, function, or class referenced in the plan, verify against the actual files on disk (`view_file` / `grep_search`) that the symbol name and signature actually exist.
+   - **No Fake Path Literals in Validation Tests**: Check test snippets in the plan for contract contradictions. If the spec requires validating that a file, directory, or binary path exists on disk, ensure plan test snippets use a real existing path (`process.execPath`, `fs.mkdtempSync`, or a temporary fixture) rather than a fake literal string (e.g., `'mock-bin-path'`) that forces the implementer to bypass `fs.existsSync` validation.
    - *Blocker Trigger:* Any unverified or non-existent repo function call (e.g., referencing `source.load_usage` when the repo defines `source.scan_usage`) is an immediate `NOT READY` blocker.
 
 3. **Audit the Wave Execution Matrix:**

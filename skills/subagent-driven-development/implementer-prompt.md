@@ -31,7 +31,7 @@ Task tool (general-purpose):
     Once you're clear on requirements:
     1. Implement exactly what the task specifies
     2. Write tests (following TDD if task says to)
-    3. Verify implementation works
+    3. Verify implementation works (In TypeScript or compiled repos, always run `npx tsc --noEmit` in addition to test runner and build script before reporting DONE)
     4. Commit your work
     5. Self-review (see below)
     6. Report back
@@ -40,6 +40,7 @@ Task tool (general-purpose):
 
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.
+    **Do NOT run `graphify update .`**: Subagents must never run `graphify update .` during task implementation to avoid parallel wave file collisions and dirty worktrees.
 
     ## Code Organization
 

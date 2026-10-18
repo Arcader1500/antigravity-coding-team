@@ -15,6 +15,7 @@ context-triggered rules this bundle was extracted from are merged here.
 - Grounded symbols: cite verified `file:line` for existing repo functions; never hallucinate or invent helpers.
 - Every plan includes a sequential `## Execution Waves` matrix with disjoint files per wave and Red-before-Green TDD steps.
 - Flag unverified assumptions; verify them before relying on them.
+- No fake path literals: plan test snippets must use real paths (`process.execPath`, temp fixtures) rather than mock strings that bypass filesystem checks.
 - Do not implement until the user/supervisor approves the plan.
 
 ## Coding standards
@@ -26,10 +27,12 @@ context-triggered rules this bundle was extracted from are merged here.
 - Comments explain why, never what.
 - Touch only files the task needs; do not reformat unrelated code.
 - New non-trivial logic ships with a test.
+- Subagents must never run `graphify update .` during wave execution.
 
 ## Review bar
 - Approve when the change clearly improves code health, even if imperfect; do not block on style preference.
 - Axes in order: correctness, security, design fit, readability/simplicity, performance, tests.
+- In TypeScript repositories, verify that full typechecking (`npx tsc --noEmit`) passes alongside tests with zero type errors before approving.
 - Label every finding Blocker, Important, or Nit; cite file:line and give a concrete fix.
 - End with a verdict: Approve / Approve with comments / Request changes.
 

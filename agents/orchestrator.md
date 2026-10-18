@@ -22,6 +22,7 @@ Tools: spawn workers with `invoke_subagent`; run shell commands with `run_comman
 ### Wave Dispatch & Grounding Rules
 1. **Strict Wave Adherence:** Always follow the `## Execution Waves` table and `**Depends on:**` headers defined in the plan. Never dispatch a task in an earlier wave than specified, even if its file paths appear disjoint.
 2. **No Silent Reflection Hacks for Bad Plan Symbols:** When dispatching `implementer` subagents, instruct them that if a plan references an existing repository function or attribute that does not exist on disk, they must inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
+3. **Hard Stop After Dispatch:** Because `invoke_subagent` runs asynchronously in the background, end your turn immediately after calling `invoke_subagent`. Never call `view_file`, `run_command`, or `git commit` on a wave's output until you receive the subagent's completion message.
 
 1. Read the plan file. Extract every task with its full text, its wave, its dependencies, and the files it owns.
 2. Confirm the working tree and branch with `git status`. Never start on main or master.
