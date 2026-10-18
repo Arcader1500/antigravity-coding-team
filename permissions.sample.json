@@ -1,0 +1,58 @@
+{
+  "_comment": "Project-agnostic permission grants. NOT read by the plugin loader - merge these arrays into ~/.gemini/config/config.json under userSettings.globalPermissionGrants (and/or the `permissions` key of ~/.gemini/antigravity-cli/settings.json). Safest path: paste them into the /permissions panel, which merges correctly and hot-reloads.",
+  "userSettings": {
+    "globalPermissionGrants": {
+      "allow": [
+        "command(regex:pytest.*)",
+        "command(regex:.*pytest.*)",
+        "command(regex:python -m pytest.*)",
+        "command(regex:python.*)",
+        "command(py --version)",
+        "command(regex:uv.*)",
+        "command(regex:npm.*)",
+        "command(regex:npx.*)",
+        "command(regex:docker compose.*)",
+        "command(regex:docker.*)",
+        "command(gh --version)",
+        "command(gh auth status)",
+        "command(regex:gh issue view.*)",
+        "command(regex:gh issue list.*)",
+        "command(regex:gh pr view.*)",
+        "command(regex:gh pr list.*)",
+        "command(regex:gh repo view.*)",
+        "command(regex:gh run view.*)",
+        "command(regex:gh run list.*)",
+        "command(regex:git status.*)",
+        "command(regex:git diff.*)",
+        "command(regex:git log.*)",
+        "command(regex:git show.*)",
+        "command(regex:git branch.*)",
+        "command(regex:git remote.*)",
+        "command(regex:git rev-parse.*)",
+        "command(regex:git ls-remote.*)",
+        "command(regex:git grep.*)",
+        "command(regex:git ls-files.*)",
+        "command(regex:Get-ChildItem.*)",
+        "command(regex:Select-String.*)",
+        "command(regex:dir.*)"
+      ],
+      "ask": [
+        "command(regex:git commit.*)",
+        "command(regex:rm .*)",
+        "command(regex:rmdir .*)",
+        "command(regex:del .*)",
+        "command(regex:erase .*)",
+        "command(regex:Remove-Item .*)",
+        "command(regex:ri .*)"
+      ],
+      "deny": [
+        "read_file(**/.env*)",
+        "write_file(**/.env*)",
+        "command(regex:cat .*\\.env.*)",
+        "command(regex:type .*\\.env.*)",
+        "command(regex:Get-Content .*\\.env.*)",
+        "command(regex:gc .*\\.env.*)"
+      ]
+    }
+  }
+}
