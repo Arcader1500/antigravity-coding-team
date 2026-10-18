@@ -13,6 +13,11 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 
 **Continuous execution:** Do not pause to check in with your human partner between tasks. Execute all tasks from the plan without stopping. The only reasons to stop are: BLOCKED status you cannot resolve, ambiguity that genuinely prevents progress, or all tasks complete. "Should I continue?" prompts and progress summaries waste their time — they asked you to execute the plan, so execute it.
 
+## Wave Dispatch & Grounding Rules
+
+1. **Strict Wave Adherence:** Always follow the `## Execution Waves` table and `**Depends on:**` headers defined in the plan. Never dispatch a task in an earlier wave than specified, even if its file paths appear disjoint.
+2. **No Silent Reflection Hacks for Bad Plan Symbols:** When dispatching `implementer` subagents, instruct them that if a plan references an existing repository function or attribute that does not exist on disk, they must inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
+
 ## When to Use
 
 ```dot

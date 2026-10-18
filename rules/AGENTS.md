@@ -10,13 +10,16 @@ context-triggered rules this bundle was extracted from are merged here.
 
 ## Planning
 - Sequence: clarify (`grilling`), explore (read the codebase with `view_file`/`grep_search`), write spec doc, **checkpoint 1: user/supervisor approves spec**, break into tasks (`writing-plans`), critique (`plan-critic` agent against approved spec until READY), **checkpoint 2: handoff plan**, execute (`orchestrator` / `subagent-driven-development`).
-- Never combine spec writing and task planning into one unpaused step: the spec must be approved before planning tasks.
-- A plan lists exact files, ordered tasks, a verify command per task, and what is out of scope.
+- Never combine spec writing and task planning into one unpaused step: the spec must be approved before planning tasks. Hard gate: stop and end turn after writing spec.
+- No "coding in markdown": plans specify interface contracts, schemas, and verification commands; code blocks must remain under 40% of plan lines.
+- Grounded symbols: cite verified `file:line` for existing repo functions; never hallucinate or invent helpers.
+- Every plan includes a sequential `## Execution Waves` matrix with disjoint files per wave and Red-before-Green TDD steps.
 - Flag unverified assumptions; verify them before relying on them.
 - Do not implement until the user/supervisor approves the plan.
 
 ## Coding standards
 - Delete before adding. Reuse existing helpers and patterns before writing new ones.
+- Never wrap missing or hallucinated symbols in `getattr()` fallback shims; use verified module signatures.
 - No speculative abstraction: generalize on the third use, not the first.
 - Names say what a thing is; no `data`, `tmp`, `result` without context.
 - Handle errors at trust boundaries; never swallow exceptions; no defensive code for impossible states.

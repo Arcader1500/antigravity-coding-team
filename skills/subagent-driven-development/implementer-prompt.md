@@ -53,6 +53,7 @@ Task tool (general-purpose):
       and note it as a concern in your report
     - In existing codebases, follow established patterns. Improve code you're touching
       the way a good developer would, but don't restructure things outside your task.
+    - **Grounded Repository Symbols:** If the plan references an existing repository function, method, or attribute that does not exist on disk, inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing or hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
 
     ## When You're in Over Your Head
 

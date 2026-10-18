@@ -33,14 +33,33 @@ Before defining tasks, map out which files will be created or modified and what 
 
 This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
 
-## Bite-Sized Task Granularity
+## Core Authoring Rules
 
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
+### 1. No Full-File Inlining ("Coding in Markdown" Ban)
+Never write complete function bodies, full file replacements, or raw HTML/CSS files (>40 lines per block) inside implementation plans. Total code blocks across the plan must remain under 40% of total lines.
+Instead of full implementations, every task must specify:
+- **Exact Signatures & Types:** Function/class definitions, argument types, return types, and dataclass/Pydantic schemas.
+- **Grounded External Calls (Anti-Hallucination):** Every call to an existing repository function, method, or class MUST cite its exact definition path and line number verified on disk (e.g., `source.scan_usage(brain_root, extractor_path)` — ref `agy_dash/source.py:75`). Never guess or invent helper names.
+- **Core Algorithmic/Tricky Snippets Only:** Only inline implementation code when demonstrating non-obvious math, tricky library wiring (e.g., complex ECharts series stacking), or exact regex/SQL queries (<30 lines).
+- **Template & UI Contracts:** For HTML/Jinja2/CSS tasks, specify the file path, parent template/block hierarchy, required context variables (with exact dict keys/types), HTMX target IDs/endpoints, and key DOM selectors—leave the markup authoring to `implementer`.
+
+### 2. Mandatory Wave Execution Matrix
+Every plan MUST include an `## Execution Waves` section immediately before `## Tasks` containing a Markdown table grouping all tasks into sequential waves (`Wave 1`, `Wave 2`, etc.):
+- **Rule 1 (Disjoint Files):** Tasks in the same wave MUST have 100% disjoint file touch-sets (both created and modified).
+- **Rule 2 (Dependency Order):** Foundational schemas/state go in Wave 1; domain/view builders and templates that consume them go in Wave 2; FastAPI routes/wiring in Wave 3; entrypoint launchers (`run.ps1`) and E2E verification in the final wave.
+- **Rule 3 (Explicit Headers):** Every task header MUST include:
+  - `**Wave:** N`
+  - `**Depends on:** [Task IDs or None]`
+  - `**Files Touched:** [exact paths]`
+- **Rule 4 (No Git Hygiene Tasks):** Never create tasks for git branch creation or working-tree cleanup (`git restore`, `git reset`, `git checkout`); workspace state is managed by the orchestrator.
+
+### 3. Strict 4-Step TDD Sequence (With Static Asset Exception)
+- **For Python / Logic / Route / View Tasks:** Every task MUST explicitly order these 4 steps:
+  1. **Write Failing Test:** Specify the concrete test cases and assertions to add to `tests/test_<module>.py`.
+  2. **Verify Red:** Run `pytest tests/test_<module>.py -v` and confirm it fails for the expected reason (missing symbol / assertion failure) BEFORE writing implementation code.
+  3. **Implement:** Write the minimal production code satisfying the contract.
+  4. **Verify Green:** Run `pytest tests/test_<module>.py -v` and confirm all tests pass.
+- **For Static Assets / Config / Scripts (`*.css`, `*.js`, `*.ps1`, `requirements.txt`, pure templates without backend routes yet):** Where unit tests do not apply, specify a concrete single-line **Verification Command** (e.g., syntax validation, file existence/import check, or FastAPI `TestClient` render check once wired).
 
 ## Plan Document Header
 
@@ -58,6 +77,16 @@ This structure informs the task decomposition. Each task should produce self-con
 **Tech Stack:** [Key technologies/libraries]
 
 ---
+
+## Execution Waves
+
+| Wave | Tasks | Description | Files Touched (Disjoint) |
+|---|---|---|---|
+| Wave 1 | Task 1, Task 2 | Schemas, models, foundation state | `path/to/schema.py`, `path/to/state.py` |
+| Wave 2 | Task 3 | Domain logic, view builders, templates | `path/to/views.py`, `path/to/template.html` |
+| Wave 3 | Task 4 | Routes, entrypoints, launchers, E2E | `path/to/app.py`, `run.ps1` |
+
+---
 ```
 
 ## Task Structure
@@ -65,7 +94,9 @@ This structure informs the task decomposition. Each task should produce self-con
 ````markdown
 ### Task N: [Component Name]
 
-**Files:**
+**Wave:** 1
+**Depends on:** [None or Task X, Task Y]
+**Files Touched:**
 - Create: `exact/path/to/file.py`
 - Modify: `exact/path/to/existing.py:123-145`
 - Test: `tests/exact/path/to/test.py`
@@ -78,19 +109,19 @@ def test_specific_behavior():
     assert result == expected
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: Run test to verify it fails (Red)**
 
 Run: `pytest tests/path/test.py::test_name -v`
 Expected: FAIL with "function not defined"
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] **Step 3: Write minimal implementation (Green)**
 
 ```python
 def function(input):
     return expected
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [ ] **Step 4: Run test to verify it passes (Green)**
 
 Run: `pytest tests/path/test.py::test_name -v`
 Expected: PASS
@@ -115,9 +146,10 @@ Every step must contain the actual content an engineer needs. These are **plan f
 
 ## Remember
 - Exact file paths always
-- Complete code in every step — if a step changes code, show the code
+- Interface contracts and tricky algorithms only — no full-file code dumps (code blocks < 40% of plan)
+- Grounded external calls with verified `file:line` citations
 - Exact commands with expected output
-- DRY, YAGNI, TDD, frequent commits
+- DRY, YAGNI, TDD (Red before Green), frequent commits
 
 ## Self-Review
 

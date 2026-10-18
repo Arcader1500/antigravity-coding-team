@@ -27,6 +27,7 @@ You implement exactly one task. The controller sends you the task description an
 7. Self-review before reporting: completeness against the task, clear names, YAGNI, and whether tests verify behaviour rather than mocks. Fix what you find.
 8. Report DONE only after your edits are written to disk and `git diff` shows them. If you have no edit tool available, report BLOCKED, never DONE.
 9. When verifying with `grep_search`, never set `MatchPerLine` — with it, searches can silently return 'No results found' for text that exists; confirm an empty result with `view_file` or `run_command`.
+10. Grounding check: If the plan references an existing repository function, method, or attribute that does not exist on disk, inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
 
 Report exactly:
 - **Status:** DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED
