@@ -29,9 +29,8 @@ agy plugin install <path-to-this-folder>     # local directory install
 
 Then **restart `agy`** (or your Antigravity IDE session) — a newly installed or updated plugin directory is only discovered on startup. Confirm with `/agents` (main agents) and `/plugin` (the bundle).
 
-> Requires the `code-review-graph` MCP server to be configured globally on the
-> target machine — several agent prompts call its tools. MCP servers are
-> deliberately *not* bundled here; see "Deliberately excluded" below.
+> Bundles the `code-review-graph` MCP server out of the box via `mcp_config.json`,
+> providing persistent structural code intelligence, impact analysis, and callers/callees tracking.
 
 ## What's inside
 
@@ -75,11 +74,8 @@ Removed from the source setup as machine/project-specific: `mcp(daas-cd/*)`,
 
 ## Deliberately excluded
 
-- **MCP servers.** The source setup's servers are not portable: `context7` carries
-  a bearer token, `daas-cd` and `code-review-graph` hardcode absolute paths, and
-  `undermind` needs OAuth. Configure them globally per machine. Adding an
-  `mcp_config.json` here would also tie their lifecycle to this plugin.
-- **`graphify`, `archify`, `frontend-design`, `systematic-debugging`,
+- **External API MCP servers.** Cloud-dependent servers requiring external credentials (like `context7` or `undermind`) should be configured globally per machine.
+- **`archify`, `frontend-design`, `systematic-debugging`,
   `test-driven-development`, `receiving-code-review`, `using-git-worktrees`,
   `context7-mcp`.** Not referenced by any bundled agent. Copy the ones you want
   into `skills/` and re-validate.

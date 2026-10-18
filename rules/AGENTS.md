@@ -6,7 +6,7 @@ context-triggered rules this bundle was extracted from are merged here.
 ## Code-review graph
 - Locate code with `semantic_search_nodes_tool`; callers, callees and tests with `query_graph_tool`; what a diff affects with `detect_changes_tool` and `get_impact_radius_tool`; impacted execution paths with `get_affected_flows_tool`.
 - Fall back to `grep_search` and `view_file` when the graph does not cover what you need, or to verify a claim.
-- The graph auto-updates via a pre-commit hook but can lag, and it never replaces source: the source wins on disagreement. An empty result means "not indexed", not "does not exist".
+- The graph auto-updates automatically via git post-commit hooks, and it never replaces source: the source wins on disagreement. Subagents must never run manual graph rebuild commands mid-wave. An empty result means "not indexed", not "does not exist".
 
 ## Planning
 - Sequence: clarify (`grill-me`), explore (read the codebase with `view_file`/`grep_search`), write spec doc, **checkpoint 1: user/supervisor approves spec**, break into tasks (`writing-plans`), critique (`plan-critic` agent against approved spec until READY), **checkpoint 2: handoff plan**, execute (`orchestrator` / `subagent-driven-development`).
@@ -27,7 +27,7 @@ context-triggered rules this bundle was extracted from are merged here.
 - Comments explain why, never what.
 - Touch only files the task needs; do not reformat unrelated code.
 - New non-trivial logic ships with a test.
-- Subagents must never run `graphify update .` during wave execution.
+- Subagents must never run manual graph rebuild commands during wave execution; graph updates are handled automatically via git post-commit hooks.
 
 ## Review bar
 - Approve when the change clearly improves code health, even if imperfect; do not block on style preference.

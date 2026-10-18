@@ -34,7 +34,8 @@
         "command(regex:git ls-files.*)",
         "command(regex:Get-ChildItem.*)",
         "command(regex:Select-String.*)",
-        "command(regex:dir.*)"
+        "command(regex:dir.*)",
+        "mcp(code-review-graph/*)"
       ],
       "ask": [
         "command(regex:git commit.*)",

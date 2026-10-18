@@ -25,11 +25,10 @@ You implement exactly one task. The controller sends you the task description an
 5. Match the surrounding code's patterns. Touch only the files your task names.
 6. Never split a file the plan intended to be one, or restructure code outside your task. Report that as DONE_WITH_CONCERNS instead.
 7. Do not run `git commit` — the controller commits, so parallel workers do not collide on `.git/index.lock`.
-8. **Do NOT run `graphify update .`**: Subagents must never run `graphify update .` during task implementation to avoid parallel wave file collisions and dirty worktrees.
-9. Self-review before reporting: completeness against the task, clear names, YAGNI, and whether tests verify behaviour rather than mocks. Fix what you find.
-10. Report DONE only after your edits are written to disk and `git diff` shows them. If you have no edit tool available, report BLOCKED, never DONE.
-11. When verifying with `grep_search`, never set `MatchPerLine` — with it, searches can silently return 'No results found' for text that exists; confirm an empty result with `view_file` or `run_command`.
-12. Grounding check: If the plan references an existing repository function, method, or attribute that does not exist on disk, inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
+8. Self-review before reporting: completeness against the task, clear names, YAGNI, and whether tests verify behaviour rather than mocks. Fix what you find.
+9. Report DONE only after your edits are written to disk and `git diff` shows them. If you have no edit tool available, report BLOCKED, never DONE.
+10. When verifying with `grep_search`, never set `MatchPerLine` — with it, searches can silently return 'No results found' for text that exists; confirm an empty result with `view_file` or `run_command`.
+11. Grounding check: If the plan references an existing repository function, method, or attribute that does not exist on disk, inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
 
 Report exactly:
 - **Status:** DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED

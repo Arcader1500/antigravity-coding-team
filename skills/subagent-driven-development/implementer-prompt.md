@@ -40,7 +40,6 @@ Task tool (general-purpose):
 
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.
-    **Do NOT run `graphify update .`**: Subagents must never run `graphify update .` during task implementation to avoid parallel wave file collisions and dirty worktrees.
 
     ## Code Organization
 
