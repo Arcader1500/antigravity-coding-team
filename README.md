@@ -47,7 +47,7 @@ permissions.sample.json     project-agnostic permission grants (not auto-loaded)
 | Agent | Role | Dispatches |
 |---|---|---|
 | `orchestrator` | runs a written plan end to end; the only agent that commits | `implementer`, `code-reviewer`, `verifier` |
-| `planner` | researches, writes spec + plan; never edits source | `researcher`, `plan-critic` |
+| `planner` | researches, writes spec, pauses for spec approval, then writes plan + critic loop; never edits source | `researcher`, `plan-critic` |
 | `implementer` | one plan task, write tools, never commits | — |
 | `researcher` | read-only, graph-first, cited facts | — |
 | `plan-critic` | red-teams a plan, findings only | — |

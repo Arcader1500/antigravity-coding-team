@@ -9,10 +9,11 @@ context-triggered rules this bundle was extracted from are merged here.
 - The graph auto-updates via a pre-commit hook but can lag, and it never replaces source: the source wins on disagreement. An empty result means "not indexed", not "does not exist".
 
 ## Planning
-- Sequence: clarify (`grilling`), explore (read the codebase with `view_file`/`grep_search`), plan (`writing-plans`), critique (`plan-critic` agent), execute (`executing-plans` or `subagent-driven-development`).
+- Sequence: clarify (`grilling`), explore (read the codebase with `view_file`/`grep_search`), write spec doc, **checkpoint 1: user/supervisor approves spec**, break into tasks (`writing-plans`), critique (`plan-critic` agent against approved spec until READY), **checkpoint 2: handoff plan**, execute (`orchestrator` / `subagent-driven-development`).
+- Never combine spec writing and task planning into one unpaused step: the spec must be approved before planning tasks.
 - A plan lists exact files, ordered tasks, a verify command per task, and what is out of scope.
 - Flag unverified assumptions; verify them before relying on them.
-- Do not implement until the user approves the plan.
+- Do not implement until the user/supervisor approves the plan.
 
 ## Coding standards
 - Delete before adding. Reuse existing helpers and patterns before writing new ones.
