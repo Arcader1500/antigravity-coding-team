@@ -1,96 +1,114 @@
-# antigravity-coding-team
+# Coding Team
 
-An Antigravity plugin that bundles the plan-and-execute agent team.
+A plan-and-execute agent team for **Antigravity** and **Codex desktop / CLI**.
+Each platform has an independent plugin, agent definitions, skills and installer.
 
-## Quick Installation / Update
-
-Run the included install script to validate, install, or update the plugin:
-
-**PowerShell (Windows):**
-```powershell
-.\install.ps1
+```text
+antigravity/              Antigravity plugin, agents, rules and eight skills
+  install.bat/.ps1/.sh    Install or update using agy
+codex/                   Codex plugin, seven TOML agents and nine skills
+  install.bat/.ps1        Install or update using Codex
+  scripts/               Configuration validation
+.agents/plugins/         Local Codex marketplace pointing to ./codex
 ```
 
-**Command Prompt (Windows):**
-```cmd
-install.bat
-```
+## Common workflow
 
-**Bash (Linux / macOS / Git Bash):**
-```bash
-./install.sh
-```
+The planner clarifies requirements, delegates research and writes a design spec.
+After spec approval it writes a plan, checked by the plan critic. After plan
+approval the orchestrator delegates implementation in dependency-ordered waves,
+with disjoint file ownership. Review and verification follow; only the
+orchestrator commits task changes.
 
-Or manually with the CLI:
-```powershell
-agy plugin install <path-to-this-folder>     # local directory install
-# or, if you publish it: agy plugin install antigravity-coding-team@<marketplace>
-```
-
-Then **restart `agy`** (or your Antigravity IDE session) — a newly installed or updated plugin directory is only discovered on startup. Confirm with `/agents` (main agents) and `/plugin` (the bundle).
-
-> Bundles the `code-review-graph` MCP server out of the box via `mcp_config.json`,
-> providing persistent structural code intelligence, impact analysis, and callers/callees tracking.
-
-## What's inside
-
-```
-plugin.json                 manifest
-agents/                     orchestrator, planner (main) + implementer,
-                            researcher, plan-critic, code-reviewer, verifier
-rules/AGENTS.md             merged operating rules (always on)
-skills/                     the 8 skills the agents reference
-permissions.sample.json     project-agnostic permission grants (not auto-loaded)
-```
-
-| Agent | Role | Dispatches |
+| Agent | Responsibility | Codex model / effort |
 |---|---|---|
-| `orchestrator` | runs a written plan end to end; the only agent that commits | `implementer`, `code-reviewer`, `verifier` |
-| `planner` | researches, writes spec, pauses for spec approval, then writes plan + critic loop; never edits source | `researcher`, `plan-critic` |
-| `implementer` | one plan task, write tools, never commits | — |
-| `researcher` | read-only, graph-first, cited facts | — |
-| `plan-critic` | red-teams a plan, findings only | — |
-| `code-reviewer` | five-axis review + verdict | — |
-| `verifier` | runs tests/lint/build, reports evidence | — |
+| planner | Requirements, spec and plan | GPT-6 Sol / high |
+| plan-critic | Critique plan against spec | GPT-6 Sol / high |
+| researcher | Scoped read-only exploration | GPT-6 Luna / low |
+| orchestrator | Dispatch, progress and commits | GPT-6 Sol / low |
+| implementer | One scoped implementation task | GPT-6 Sol / medium |
+| code-reviewer | Diff review and verdict | GPT-6 Sol / high |
+| verifier | Tests, lint, typecheck and build evidence | GPT-6 Luna / low |
 
-Bundled skills: `subagent-driven-development`, `grill-me`, `writing-plans`,
-`executing-plans`, `ponytail`, `verification-before-completion`,
-`finishing-a-development-branch`, `code-review-and-quality`.
+Both plugins bundle `code-review-graph` MCP configuration. Its executable must
+be installed and available on PATH to use graph tools. Codex falls back to source
+inspection when graph tools are unavailable. All roles respect session permissions.
 
-## Permissions
+## Run with Antigravity
 
-`permissions.sample.json` holds only the project-agnostic grants: pytest/python/uv,
-npm/npx, docker, read-only `gh` and `git` commands, plus `git commit` and delete
-commands in `ask`, and all `.env*` reads/writes in `deny`.
-
-It is **not** loaded by the plugin system — plugins cannot ship permissions. Merge
-the three arrays into `userSettings.globalPermissionGrants` in
-`~/.gemini/config/config.json`, or paste them into the `/permissions` panel (that
-path merges correctly and hot-reloads, and is the safer choice).
-
-Removed from the source setup as machine/project-specific: `mcp(daas-cd/*)`,
-`mcp(code-review-graph/*)` (belongs to the MCP server's own install) and
-`read_url(raw.githubusercontent.com)`.
-
-## Deliberately excluded
-
-- **External API MCP servers.** Cloud-dependent servers requiring external credentials (like `context7` or `undermind`) should be configured globally per machine.
-- **`archify`, `frontend-design`, `systematic-debugging`,
-  `test-driven-development`, `receiving-code-review`, `using-git-worktrees`,
-  `context7-mcp`.** Not referenced by any bundled agent. Copy the ones you want
-  into `skills/` and re-validate.
-- **Triggered rules.** Plugin rules are always on; the source's
-  `trigger: model_decision` / `trigger: glob` scoping (and the `security` glob)
-  is lost in the merge into `rules/AGENTS.md`.
-
-## Publishing (optional)
-
-`agy plugin install name@marketplace` needs a Marketplace entry; a local directory
-path needs nothing. To publish, `git init` this folder, push it, and hook it to a
-marketplace with `agy plugin link <marketplace> <target>`.
-
-Validate any edit before installing:
+Requires the `agy` CLI. On Windows, double-click **antigravity/install.bat**, or
+run from this repository's root:
 
 ```powershell
-agy plugin validate <path> --strict
+.\antigravity\install.ps1
+# Validate without installing:
+.\antigravity\install.ps1 -ValidateOnly
+```
+
+On Linux, macOS or Git Bash:
+
+```bash
+bash antigravity/install.sh
+```
+
+Restart Antigravity after installing. Use `/agents` to choose `planner` or
+`orchestrator`, and `/plugin` to inspect the bundle. Manual installation:
+`agy plugin install ./antigravity`.
+
+See [Antigravity details](antigravity/README.md) for permissions and packaging.
+
+## Run with Codex
+
+Requires Codex desktop / CLI with `codex` on PATH, **PowerShell 7** (`pwsh`), and
+access to the configured OpenAI models. On Windows, double-click
+**codex/install.bat**, or run from this repository's root:
+
+```powershell
+pwsh -NoProfile -File .\codex\install.ps1
+# Validate structure without installing:
+pwsh -NoProfile -File .\codex\install.ps1 -ValidateOnly
+```
+
+The installer registers this repository's marketplace, installs/enables
+`coding-team`, copies seven agents into `~/.codex/agents/`, and installs planner
+and orchestrator CLI profiles. Differing existing agent files and existing
+profiles are backed up. Run the same installer after edits to refresh the cache.
+
+Start a new chat after installation; restart Codex if the skill list is stale.
+The `$` picker lists **skills**, while agents are delegation targets.
+For planning, select **GPT-6 Sol / High** in the desktop composer and send:
+
+```text
+$coding-team Act as the planner. Plan this feature: [your requirements].
+Delegate exploration to researcher and plan critique to plan-critic.
+```
+
+After approving the plan, start a fresh chat with **GPT-6 Sol / Low** and send:
+
+```text
+$coding-team Act as the orchestrator. Execute the approved plan at [plan path].
+Use implementer, code-reviewer and verifier for their assigned roles.
+```
+
+The main chat model is selected separately; spawned agents use their TOML model
+settings. CLI profiles select the main role and model together:
+
+```powershell
+codex -p coding-team-planner -C <your-project-folder>
+codex -p coding-team-orchestrator -C <your-project-folder>
+```
+
+See [Codex details](codex/README.md) for configuration notes and recommendations.
+
+## Maintain and validate
+
+Edit `antigravity/` for Antigravity changes and `codex/` for Codex changes.
+Installing Codex does not regenerate its files from Antigravity. Keep shared
+workflow changes consistent across both where appropriate.
+
+```powershell
+agy plugin validate .\antigravity --strict
+pwsh -NoProfile -File .\codex\install.ps1 -ValidateOnly
+# Deeper checks including installed-file parity (Python 3.11+; after installation):
+python .\codex\scripts\validate.py
 ```

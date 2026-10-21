@@ -1,0 +1,11 @@
+{
+  "name": "coding-team",
+  "version": "1.0.0",
+  "description": "Codex plan-and-execute coding team with scoped agent models, approval gates, review and verification.",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "shortDescription": "Plan, implement, review and verify with specialized agents",
+    "displayName": "Coding Team"
+  }
+}

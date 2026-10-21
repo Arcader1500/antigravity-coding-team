@@ -1,0 +1,20 @@
+{
+  "plugins": [
+    {
+      "source": {
+        "path": "./codex",
+        "source": "local"
+      },
+      "category": "Productivity",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "name": "coding-team"
+    }
+  ],
+  "interface": {
+    "displayName": "Local Coding Team"
+  },
+  "name": "coding-team-local"
+}
