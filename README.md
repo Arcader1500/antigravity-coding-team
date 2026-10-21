@@ -6,7 +6,7 @@ Each platform has an independent plugin, agent definitions, skills and installer
 ```text
 antigravity/              Antigravity plugin, agents, rules and eight skills
   install.bat/.ps1/.sh    Install or update using agy
-codex/                   Codex plugin, seven TOML agents and nine skills
+codex/                   Codex plugin, seven TOML agents and twelve skills
   install.bat/.ps1        Install or update using Codex
   scripts/               Configuration validation
 .agents/plugins/         Local Codex marketplace pointing to ./codex
@@ -79,16 +79,17 @@ The `$` picker lists **skills**, while agents are delegation targets.
 For planning, select **GPT-6 Sol / High** in the desktop composer and send:
 
 ```text
-$coding-team Act as the planner. Plan this feature: [your requirements].
-Delegate exploration to researcher and plan critique to plan-critic.
+$team-plan Plan this feature: [your requirements].
 ```
 
 After approving the plan, start a fresh chat with **GPT-6 Sol / Low** and send:
 
 ```text
-$coding-team Act as the orchestrator. Execute the approved plan at [plan path].
-Use implementer, code-reviewer and verifier for their assigned roles.
+$team-run Execute the approved plan at [plan path].
 ```
+
+For an independent review, use `$team-review Review my current diff`.
+`$coding-team` remains available and routes to these workflows.
 
 The main chat model is selected separately; spawned agents use their TOML model
 settings. CLI profiles select the main role and model together:
@@ -99,6 +100,24 @@ codex -p coding-team-orchestrator -C <your-project-folder>
 ```
 
 See [Codex details](codex/README.md) for configuration notes and recommendations.
+
+### Codex review and verification cadence
+
+Each implementer runs checks focused on its task and reviews its own changes.
+After each wave, verifier checks that completed tasks work together. High-impact
+changes (security, migrations, shared interfaces or concurrency) get independent
+review before dependent work. At completion, code-reviewer reviews the full diff
+against the spec, and verifier runs all relevant project checks. Stricter user
+requirements take precedence.
+
+For example, two independent UI tasks can each run their focused tests, then
+share one wave integration run and one final full review. They do not each need
+two reviewers and another full build. If a wave changes an authentication
+contract, it gets early independent review before consumers proceed.
+
+Matching evidence can be reused for unchanged code and environment: a full
+final-wave run on the final revision need not run twice. Focused task tests
+cannot replace full completion verification, and fixes require affected rechecks.
 
 ## Maintain and validate
 

@@ -1,25 +1,5 @@
-# Code Quality Reviewer Prompt Template
+# Code quality review payload
 
-Use this template when dispatching a code quality reviewer subagent.
+Use registered agent_type="code-reviewer" when the wave's risk requires early review and at final full-change review. Supply diff scope, approved requirements, affected contracts, risk and verifier evidence. Ask for correctness, security, design fit, clarity, performance and test coverage findings with file:line, concrete fixes and verdict.
 
-**Purpose:** Verify implementation is well-built (clean, tested, maintainable)
-
-**Only dispatch after spec compliance review passes.**
-
-```
-Task tool (general-purpose):
-  Use the code-review skill.
-
-  DESCRIPTION: [task summary, from implementer's report]
-  PLAN_OR_REQUIREMENTS: Task N from [plan-file]
-  BASE_SHA: [commit before task]
-  HEAD_SHA: [current commit]
-```
-
-**In addition to standard code quality concerns, the reviewer should check:**
-- Does each file have one clear responsibility with a well-defined interface?
-- Are units decomposed so they can be understood and tested independently?
-- Is the implementation following the file structure from the plan?
-- Did this implementation create new files that are already large, or significantly grow existing files? (Don't flag pre-existing file sizes — focus on what this change contributed.)
-
-**Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
+Combine this with spec compliance review instead of requiring two reviewers after every routine task. Consume matching current verification evidence; run focused diagnostics for suspected defects, not another automatic full suite. Do not duplicate model overrides or role instructions; TOML defines them.

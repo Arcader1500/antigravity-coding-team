@@ -20,10 +20,18 @@ Guide completion of development work by presenting clear options and handling ch
 
 ### Step 1: Verify Tests
 
-**Before presenting options, verify tests pass:**
+**Before presenting options, verify full relevant checks cover the final code:**
+
+Use the independent verifier's matching completion evidence when source revision
+or diff fingerprint, environment, commands and scope are unchanged. Do not repeat
+an identical full run merely to enter this skill. If evidence is missing/stale,
+dispatch registered agent_type="verifier" for actual project commands. Applicable
+static/configuration checks replace a test suite in projects without runnable
+tests; missing required tooling remains a gap. Review and verification must cover
+the final code after fixes. Follow subagent-driven-development for the cadence.
 
 ```bash
-# Run project's test suite
+# Examples only; use the actual project's configured commands when needed
 npm test / cargo test / pytest / go test ./...
 ```
 

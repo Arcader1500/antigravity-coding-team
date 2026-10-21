@@ -27,6 +27,8 @@ for name in ('planner', 'orchestrator'):
     profile = tomllib.loads((home / f'coding-team-{name}.config.toml').read_text(encoding='utf-8-sig'))
     assert (profile['model'], profile['model_reasoning_effort']) == expected[name]
     assert profile['developer_instructions'].strip()
+    role = tomllib.loads((root / f'agents/{name}.toml').read_text(encoding='utf-8'))
+    assert profile['developer_instructions'].strip() == role['developer_instructions'].strip(), name
 manifest = json.loads((root / '.codex-plugin/plugin.json').read_text(encoding='utf-8-sig'))
 assert manifest['skills'] == './skills/'
 for path in (root).rglob('*'):
@@ -34,9 +36,14 @@ for path in (root).rglob('*'):
         installed = cache / path.relative_to(root)
         assert installed.is_file() and installed.read_bytes() == path.read_bytes(), installed
 skills = list((root / 'skills').glob('*/SKILL.md'))
-assert len(skills) == 9
+assert len(skills) == 12
+for entry, role in {'team-plan': 'planner', 'team-run': 'orchestrator'}.items():
+    path = root / f'skills/{entry}/SKILL.md'
+    assert (path.parent / f'../../agents/{role}.toml').resolve().is_file(), path
+    assert f'../../agents/{role}.toml' in path.read_text(encoding='utf-8'), path
+assert 'agent_type="code-reviewer"' in (root / 'skills/team-review/SKILL.md').read_text(encoding='utf-8')
 for path in skills:
     text = path.read_text(encoding='utf-8-sig')
     assert text.startswith('---\n') and '\nname:' in text and '\ndescription:' in text, path
     assert 'superpowers:' not in text, path
-print('PASS: 7 role mappings, 14 matching agent files, 2 profiles, 9 skills, installed cache parity.')
+print('PASS: 7 role mappings, 14 matching agent files, 2 profiles, 12 skills, entry-point links, installed cache parity.')
