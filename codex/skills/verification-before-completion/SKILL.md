@@ -1,14 +1,16 @@
 ---
 name: verification-before-completion
-description: Require stage-appropriate command evidence before claiming task, wave or feature success, committing or handing off verified work.
+description: Require scoped evidence for task claims and post-review independent verifier evidence for overall completion.
 ---
 
-Evidence before claims. Determine what is being claimed: a scoped task, integration wave, independent code review, or full feature completion. Use subagent-driven-development's task/wave/completion cadence. A passing focused test establishes only its scoped behavior; it cannot justify "all tests pass" or full feature completion.
+Follow subagent-driven-development's sequence: implement tasks/waves -> review/fix loop until approved -> verifier -> complete. No automatic per-wave verifier runs or early risk-based review gates.
 
-For a task, require actual focused checks and implementer self-review. For a wave, require verifier interaction checks after writers finish, with early independent review for high-impact changes before dependent work. For feature completion, require independent full-diff review and verifier evidence for full relevant project tests, lint, typecheck and build that exist. Static/config/documentation projects use applicable validators. Missing tooling or unrun required checks are gaps, never passes.
+Task completion requires actual focused checks and implementer self-review. Passing a focused test supports only its scope; it cannot justify "all tests pass" or final feature completion. Orchestrator can use task evidence to advance dependencies and commit authorized owned changes, without claiming final approval.
 
-Evidence must identify command, working directory, checked source revision or diff fingerprint including uncommitted/new files, environment, scope, exit code and relevant output. Read and assess the output; a started command, empty log, implementer promise or green unrelated check is insufficient. Report failures honestly. Code review approval is distinct from execution evidence.
+Overall completion requires code-reviewer approval followed by independent verifier execution of full relevant project tests/lint/typecheck/build that exist, or applicable static/config/documentation validators. A review verdict is not command evidence, and task checks do not substitute for final verification. Missing required tooling is a gap, never a pass.
 
-Matching evidence may be handed off by verifier and reused when inputs, environment, required commands and scope are unchanged. The current agent need not rerun a command solely to repeat a supported claim, commit a scoped verified task, move to the next wave, delegate or finish a branch. A full final-wave run on the final code may also satisfy completion; targeted checks cannot substitute. Invalidate affected evidence after code, dependencies, configuration or environment changes, rerun the affected checks and ensure final full coverage before claiming overall success.
+Evidence identifies command, working directory, source revision or diff fingerprint including uncommitted/new files, environment, scope, exit code and relevant output. Read the output; a started command, empty log or promise is insufficient. Report failures honestly.
 
-Only orchestrator commits when authorized and after the applicable stage checks/review. A task commit does not certify final feature completion. Never claim checks ran if they were only inferred. State precisely what passed, who ran it, its scope, and any limitations.
+If verifier fails, orchestrator delegates implementer fixes, reviewer approves the changes, then verifier reruns affected checks and establishes final coverage. Matching verifier evidence may be reused only for unchanged inputs/environment/commands/scope after the required post-review verifier stage has occurred. Do not use earlier task or wave evidence to bypass that stage. Re-run affected checks after source/configuration/dependency/environment changes.
+
+Never claim full completion before reviewer approval and passing required independent verification. State exactly what passed and its limitations.

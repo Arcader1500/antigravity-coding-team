@@ -1,5 +1,5 @@
 # Spec compliance review payload
 
-Use registered agent_type="code-reviewer" for high-impact early review or full-change completion review. Routine tasks use implementer self-review and wave integration checks; this file does not mandate another reviewer per task.
+After all implementation tasks/waves finish, spawn registered agent_type="code-reviewer". Supply approved spec, handed-off plan, full diff scope including new files, implemented task IDs and focused check evidence. Ask for source-grounded acceptance-criteria review and Blocker/Important/Nit findings with file:line, fixes and verdict. Combine spec compliance and code quality in one review, not two per task.
 
-Supply approved spec/requirements, review scope (base/head or working diff including new files), implemented task IDs, risk, claims and current verification evidence. Ask the reviewer to verify behavior in source against acceptance criteria, flag missing/extra scope and report Blocker/Important/Nit findings with file:line and verdict. Combine spec compliance and code quality in the same independent review unless a user explicitly requests separate reviews. The registered TOML provides instructions/model; do not paste an alternate role prompt.
+Orchestrator dispatches implementer fixes for required findings; reviewer rechecks fixes and affected scope until approved. Final verifier runs only after approval. If verifier then requires code fixes, review those fixes before returning to verifier. Role TOML supplies instructions/model; payload contains task context only.

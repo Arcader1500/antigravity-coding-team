@@ -101,23 +101,25 @@ codex -p coding-team-orchestrator -C <your-project-folder>
 
 See [Codex details](codex/README.md) for configuration notes and recommendations.
 
-### Codex review and verification cadence
+### Codex review and verification flow
 
-Each implementer runs checks focused on its task and reviews its own changes.
-After each wave, verifier checks that completed tasks work together. High-impact
-changes (security, migrations, shared interfaces or concurrency) get independent
-review before dependent work. At completion, code-reviewer reviews the full diff
-against the spec, and verifier runs all relevant project checks. Stricter user
-requirements take precedence.
+```text
+Planner -> spec checkpoint -> create plan -> plan-critic
+  -> planner fixes -> critic rechecks until READY
+  -> manual handoff to orchestrator
+  -> implementers execute tasks and waves with focused checks
+  -> code-reviewer -> orchestrator dispatches implementer fixes
+  -> reviewer rechecks until all required findings are resolved and approved
+  -> verifier -> complete
+```
 
-For example, two independent UI tasks can each run their focused tests, then
-share one wave integration run and one final full review. They do not each need
-two reviewers and another full build. If a wave changes an authentication
-contract, it gets early independent review before consumers proceed.
-
-Matching evidence can be reused for unchanged code and environment: a full
-final-wave run on the final revision need not run twice. Focused task tests
-cannot replace full completion verification, and fixes require affected rechecks.
+Waves organize implementation and dependencies; they do not automatically trigger
+verifier runs or early risk-based review gates. Only after review approval does
+verifier run the full relevant project checks. If verification fails, orchestrator
+dispatches implementer fixes, reviewer approves the changes, then verifier checks
+again. Completion requires both review approval and passing required verification.
+Earlier task checks cannot replace the post-review verifier stage. Matching final
+verifier evidence may be reused only for unchanged code, commands and environment.
 
 ## Maintain and validate
 

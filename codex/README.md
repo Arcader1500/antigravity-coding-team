@@ -57,9 +57,9 @@ the fallback when graph tools are unavailable or stale.
 
 The first improvement batch is implemented: dedicated entry skills, registered
 agent-type dispatch, repository-specific planning commands/dependencies, and
-task/wave/completion checks. Routine tasks use focused checks and self-review;
-waves verify integration; high-impact changes get early independent review;
-completion requires independent full-diff review and full relevant verification.
+the original execution sequence: tasks/waves with focused checks, then the
+code-review/fix loop until approved, then final verifier, then complete.
+No automatic per-wave verifier runs or early risk-based review gates are added.
 See the root README for examples and evidence-reuse rules. Recommendations below
 describe remaining work rather than additional requirements.
 
@@ -71,7 +71,7 @@ describe remaining work rather than additional requirements.
    completed task IDs, commit SHAs, checks and unresolved risks. This makes a fresh
    execution chat resumable without reading the whole planning conversation.
 3. Measure the new review cadence on real projects: check that focused task
-   validation, wave integration checks and independent completion checks catch
+   validation, the review/fix loop and independent final verification catch
    regressions while avoiding repeated identical full-suite runs.
 4. Replace the planner's broad mandatory question categories with questions only
    for material ambiguity. Reuse decisions the user already gave.

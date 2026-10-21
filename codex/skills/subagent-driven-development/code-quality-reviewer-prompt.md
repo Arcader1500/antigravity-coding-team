@@ -1,5 +1,5 @@
 # Code quality review payload
 
-Use registered agent_type="code-reviewer" when the wave's risk requires early review and at final full-change review. Supply diff scope, approved requirements, affected contracts, risk and verifier evidence. Ask for correctness, security, design fit, clarity, performance and test coverage findings with file:line, concrete fixes and verdict.
+Use registered agent_type="code-reviewer" after all tasks/waves, and again after fixes. Supply full initial diff scope, approved requirements, affected contracts and task-check evidence; for rechecks supply findings, fixes and affected scope. Review correctness, security, design fit, clarity, performance and coverage with file:line, fixes and verdict.
 
-Combine this with spec compliance review instead of requiring two reviewers after every routine task. Consume matching current verification evidence; run focused diagnostics for suspected defects, not another automatic full suite. Do not duplicate model overrides or role instructions; TOML defines them.
+Combine code quality with spec compliance. Loop reviewer -> orchestrator -> implementer -> reviewer until approved. Do not impose automatic per-task or per-wave review. Final verifier is dispatched after approval; verification fixes return through implementer and reviewer before verification resumes. Do not duplicate model overrides or role prompts.

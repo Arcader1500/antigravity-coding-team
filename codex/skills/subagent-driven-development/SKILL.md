@@ -1,30 +1,32 @@
 ---
 name: subagent-driven-development
-description: Execute an approved plan with registered Codex agents, dependency waves and risk-based verification.
+description: Execute a manually handed-off plan by waves, then loop independent review and fixes until approved before final verification.
 ---
 
-Read the approved spec and plan. Extract full task text, IDs, dependencies, owned files, acceptance criteria and checks. Follow waves strictly: parallelize only disjoint owned files with satisfied dependencies, within actual concurrency. Wait for workers before inspecting output. Preserve unrelated work and prior approvals.
+## Approved sequence
 
-Dispatch registered agent types: implementer for one task, code-reviewer for independent analysis, verifier for command execution. Use agent_type and let role TOML supply instructions/model/effort; do not reconstruct role prompts or duplicate model overrides. Provide focused context rather than full chat history. Reuse workers for corrections. Report unavailable roles; never silently substitute generic roles. Workers never commit or delegate further.
+Planner -> spec checkpoint -> create plan -> plan-critic -> planner fixes -> repeat critic until READY -> manual handoff to orchestrator -> implementers execute tasks/waves -> code-reviewer -> orchestrator dispatches implementer fixes -> reviewer rechecks until approved -> verifier -> complete.
 
-## Task checks
+The planner stops after READY and presents the plan for manual handoff. Do not start execution automatically. An explicit user handoff authorizes execution of that plan; do not ask for the same approval again.
 
-Implementer runs focused checks for owned behavior and self-reviews against the task. For new non-trivial logic, demonstrate a meaningful failing test before implementation, then passing behavior. For static/config/documentation changes, use suitable syntax, rendering, link or configuration checks rather than artificial unit tests.
+## Tasks and waves
 
-Run targeted typecheck/build for compiled contract changes or tasks that cannot be checked in isolation. If no narrower command exists, a full command may be needed; explain why. Report commands, exit codes, relevant output and scope. DONE means scoped task checks passed, not that the whole feature is verified.
+Read the handed-off spec and plan. Extract full task text, IDs, dependencies, owned files, acceptance criteria and checks. Follow waves strictly; parallelize only disjoint files with satisfied dependencies within actual concurrency. Await workers before inspecting output. Preserve unrelated user changes.
 
-## Wave checks
+Dispatch registered agent_type="implementer" for one scoped task, "code-reviewer" for independent review, and "verifier" for final command execution. Role TOML supplies model/effort/instructions; do not paste role prompts or duplicate model overrides. Provide focused context, reuse workers for fixes and report missing roles instead of generic substitution. Workers never delegate or commit.
 
-After all wave workers finish, inspect edits and resolve concerns. Dispatch verifier for checks covering interactions among the tasks and dependencies. Include relevant typecheck/build when shared types, package boundaries or generated interfaces changed. Discover commands from the actual repository, not a prescribed language/framework.
+Each implementer runs focused project checks and self-reviews. For non-trivial logic, demonstrate failing behavior before implementation, then passing behavior. Static/config/documentation changes use applicable validators. Run broader typecheck/build only when needed to establish the task's correctness. Report commands, exit codes, scope and concerns. DONE is task completion, not final feature approval.
 
-Require independent reviewer approval before dependent work for authentication/authorization, security boundaries, migrations or persistent data formats, public/shared interfaces, concurrency-sensitive logic, or other high-impact changes. Also review early when acceptance criteria are uncertain or scope changed. Routine isolated tasks do not require two separate reviewers each. User-requested stricter cadence takes precedence.
+Orchestrator inspects task results and resolves failures/concerns before dependent tasks. A completed wave is a scheduling boundary, not an automatic verifier or reviewer dispatch. Do not impose per-wave verification, early risk-based reviews, or two reviews per task. Honor extra checks/reviews only when explicitly requested or specified by the handed-off plan. Only orchestrator stages owned files and commits when authorized, after applicable task checks; a task commit is not final approval.
 
-Never run integration checks while implementers are writing. Do not advance after failed wave checks or unresolved Important/Blocker findings. Only orchestrator stages explicit owned paths and commits when authorized, after applicable checks and review. Such commits may precede final feature verification; they are not a completion claim.
+## Review and fix loop
 
-## Completion checks
+After all tasks/waves finish, dispatch code-reviewer on the full change against the spec. Reviewer covers correctness, security, design fit, clarity, performance and coverage. If findings require changes, orchestrator delegates fixes to implementer; implementer runs focused checks; code-reviewer rechecks fixes and affected scope. Repeat until reviewer approves and every required finding is resolved. Non-blocking advisory nits may remain only when reviewer explicitly approves them. Do not dispatch final verifier while required review findings remain open.
 
-After the last wave, dispatch code-reviewer against the approved spec and full change for correctness, security, design fit, clarity, performance and coverage. Dispatch verifier for the full relevant project tests, lint, typecheck and build commands that exist. Static/documentation-only repositories use applicable validators. Missing tooling is a gap, not a pass. These independent checks cannot be replaced by implementer self-review.
+## Final verification and completion
 
-Avoid duplicate identical checks on unchanged inputs/environment. A final-wave verifier run can serve as completion verification only if it already covered the full final revision and all completion commands. Earlier targeted checks cannot replace full coverage. Record command, scope, source revision or diff fingerprint, environment and result in reports. After fixes or dependency/configuration changes, rerun affected checks; full checks must cover the final revision before claiming overall success. Reviewer consumes verifier evidence rather than rerunning every command.
+Only after reviewer approval, dispatch verifier for full relevant project tests, lint, typecheck and build that exist, or applicable static/config validators. Missing required tooling or unrun required checks are gaps, not passes. Implementer checks and review approval cannot replace this independent final verifier stage.
 
-Resolve correctness/scope concerns before dependent work. Answer NEEDS_CONTEXT and continue the worker. Resolve a BLOCKED cause or report it; do not retry unchanged. Give concise progress and a final report with independent review, checks, commits and limitations. Never push, merge or delete branches without authorization.
+If verification fails, orchestrator dispatches implementer fixes, obtains code-reviewer approval of the changes, then returns to verifier for affected checks and final relevant coverage. Repeat until review is approved and required verification passes; do not declare completion while either fails. Reuse verifier evidence only when code, dependencies, configuration, environment, commands and scope remain unchanged. Evidence before the required post-review verifier stage cannot skip that stage.
+
+Report final review verdict, verifier commands/exit codes/coverage, commits and limitations. Resolve NEEDS_CONTEXT or concrete BLOCKED causes rather than retrying unchanged. Never push, merge or delete branches without authorization.

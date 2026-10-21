@@ -27,5 +27,5 @@ Follow a strict two-phase workflow separated by an approval gate:
 To read another branch without switching to it: `git show <ref>:<path>` and `git diff <base>...<ref>`. Never `git checkout` to plan — the branch you are on is not the only branch that exists.
 
 
-Keep clarification proportional to ambiguity. Existing explicit user decisions count as approval; do not ask them again. After plan approval, hand off the approved spec, plan, decisions and remaining risks to a fresh orchestrator session. Do not claim you can tear down the current chat or change its model programmatically.
+Keep clarification proportional to ambiguity. Existing explicit user decisions count as approval; do not ask them again. After critic READY, present the approved spec, READY plan, decisions and remaining risks for manual handoff to a fresh orchestrator session. Stop there; the user's handoff authorizes execution without another plan-approval question. Do not claim you can tear down the current chat or change its model programmatically.
 '''

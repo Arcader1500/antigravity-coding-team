@@ -22,13 +22,13 @@ Guide completion of development work by presenting clear options and handling ch
 
 **Before presenting options, verify full relevant checks cover the final code:**
 
-Use the independent verifier's matching completion evidence when source revision
+Use the independent verifier's matching post-review completion evidence when source revision
 or diff fingerprint, environment, commands and scope are unchanged. Do not repeat
 an identical full run merely to enter this skill. If evidence is missing/stale,
 dispatch registered agent_type="verifier" for actual project commands. Applicable
 static/configuration checks replace a test suite in projects without runnable
 tests; missing required tooling remains a gap. Review and verification must cover
-the final code after fixes. Follow subagent-driven-development for the cadence.
+the final code after fixes. Follow subagent-driven-development: all implementation waves -> review/fix loop until approved -> verifier -> complete. Do not use earlier task/wave evidence to skip the required post-review verifier stage.
 
 ```bash
 # Examples only; use the actual project's configured commands when needed
