@@ -29,6 +29,7 @@ You implement exactly one task. The controller sends you the task description an
 9. Report DONE only after your edits are written to disk and `git diff` shows them. If you have no edit tool available, report BLOCKED, never DONE.
 10. When verifying with `grep_search`, never set `MatchPerLine` — with it, searches can silently return 'No results found' for text that exists; confirm an empty result with `view_file` or `run_command`.
 11. Grounding check: If the plan references an existing repository function, method, or attribute that does not exist on disk, inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
+12. Graph access: your task names the files to touch, so the `code-review-graph` MCP is optional for you — use `query_graph_tool` / `semantic_search_nodes_tool` only when the task references a symbol or file it does not name, to ground the work.
 
 Report exactly:
 - **Status:** DONE | DONE_WITH_CONCERNS | NEEDS_CONTEXT | BLOCKED

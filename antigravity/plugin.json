@@ -1,6 +1,6 @@
 {
   "name": "antigravity-coding-team",
-  "description": "Plan-and-execute coding team for Antigravity: a planner that researches and writes specs/plans, an orchestrator that runs a plan end to end, and read-only/focused subagents for research, plan critique, review and verification.",
+  "description": "Plan-and-execute coding team for Antigravity: a planner that researches and writes specs/plans, an orchestrator that runs a plan end to end, read-only/focused subagents for research, plan critique, review and verification, and a DevOps expert for Kubernetes, Terraform, CI/CD and cloud questions.",
   "version": "1.0.0",
   "suggestedPrompts": [
     "Plan this change before writing any code",

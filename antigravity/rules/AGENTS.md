@@ -4,9 +4,11 @@ Plugin rules are always on while this plugin is enabled, so the five
 context-triggered rules this bundle was extracted from are merged here.
 
 ## Code-review graph
-- Locate code with `semantic_search_nodes_tool`; callers, callees and tests with `query_graph_tool`; what a diff affects with `detect_changes_tool` and `get_impact_radius_tool`; impacted execution paths with `get_affected_flows_tool`.
-- Fall back to `grep_search` and `view_file` when the graph does not cover what you need, or to verify a claim.
-- The graph auto-updates automatically via git post-commit hooks, and it never replaces source: the source wins on disagreement. Subagents must never run manual graph rebuild commands mid-wave. An empty result means "not indexed", not "does not exist".
+- **Use the graph whenever the task does not name the files.** If your instructions do not enumerate every file and symbol you must read or change, you MUST call the `code-review-graph` MCP before scanning files or guessing at scope. That binds `planner`, `orchestrator`, `researcher`, `plan-critic` and `code-reviewer`. It does not bind `implementer` (its task names the files) or `verifier` (it only runs commands) — but the graph stays available to both for grounding checks.
+- Pick the tool by question: `semantic_search_nodes_tool` to locate code, `query_graph_tool` for callers/callees/tests, `detect_changes_tool` for what a diff changed, `get_impact_radius_tool` for blast radius, `get_affected_flows_tool` for impacted execution paths, `get_review_context_tool` for risk-scored snippets.
+- Name the graph tools you used in your report. A silent skip on a task that needs the graph is a defect, not a style choice.
+- Fall back to `grep_search` and `view_file` when the graph does not cover what you need, or to verify a claim. An empty result means "not indexed", not "does not exist": confirm with `view_file`.
+- The graph auto-updates via git post-commit hooks, and it never replaces source: the source wins on disagreement. Subagents must never run manual graph rebuild commands mid-wave.
 
 ## Planning
 - Sequence: clarify (`grill-me`), explore (read the codebase with `view_file`/`grep_search`), write spec doc, **checkpoint 1: user/supervisor approves spec**, break into tasks (`writing-plans`), critique (`plan-critic` agent against approved spec until READY), **checkpoint 2: handoff plan**, execute (`orchestrator` / `subagent-driven-development`).
