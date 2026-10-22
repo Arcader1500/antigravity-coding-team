@@ -3,7 +3,7 @@ name: finishing-a-development-branch
 description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
 ---
 
-Codex adaptation: use tools actually available in this session. If no interactive user-input tool is available, ask a concise direct question. Use native collaboration spawn and wait tools; await completion before acting on worker output. Only the orchestrator commits. Graph MCP is optional. References to unavailable external skills are optional guidance, not prerequisites. Existing explicit user decisions and approvals persist. Never publish, merge, push or delete branches without authorization.
+Codex adaptation: use tools actually available in this session. If no interactive user-input tool is available, ask a concise direct question. Use native collaboration spawn and wait tools; await completion before acting on worker output. Only the orchestrator commits. Graph MCP availability is required; orchestrator owns missing setup before dispatch. Source inspection confirms critical claims and covers unindexed content. Missing MCP access is a reported blocker, not a silent fallback. References to unavailable external skills are optional guidance, not prerequisites. Existing explicit user decisions and approvals persist. Never publish, merge, push or delete branches without authorization.
 
 
 # Finishing a Development Branch
@@ -131,19 +131,31 @@ git branch -d <feature-branch>
 
 #### Option 2: Push and Create PR
 
-```bash
-# Push branch
-git push -u origin <feature-branch>
+In PowerShell, always write multiline PR descriptions to a temporary UTF-8 file
+and pass its path with `--body-file`. Do not interpolate Markdown into `--body`,
+use Bash heredocs, or replace newlines with literal `\n`. Use the same approach
+with `gh pr edit --body-file` when updating an existing PR.
 
-# Create PR
-gh pr create --title "<title>" --body "$(cat <<'EOF'
+```powershell
+git push -u origin <feature-branch>
+if ($LASTEXITCODE -ne 0) { throw 'Push failed' }
+
+$prBodyPath = [System.IO.Path]::GetTempFileName()
+$prBody = @'
 ## Summary
 <2-3 bullets of what changed>
 
 ## Test Plan
 - [ ] <verification steps>
-EOF
-)"
+'@
+try {
+    [System.IO.File]::WriteAllText(
+        $prBodyPath, $prBody, [System.Text.UTF8Encoding]::new($false))
+    gh pr create --title '<title>' --body-file $prBodyPath
+    if ($LASTEXITCODE -ne 0) { throw 'PR creation failed' }
+} finally {
+    Remove-Item -LiteralPath $prBodyPath -ErrorAction SilentlyContinue
+}
 ```
 
 **Do NOT clean up worktree** — user needs it alive to iterate on PR feedback.

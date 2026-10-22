@@ -40,9 +40,28 @@ The profiles contain the role instructions and live in `~/.codex/`.
 They do not replace your global default model. The installer backs up differing
 existing agent files and existing profiles before replacing them.
 
-`code-review-graph serve` is configured as a local MCP server. Install its
-executable and make it available on PATH to use it. Source inspection remains
-the fallback when graph tools are unavailable or stale.
+`code-review-graph serve` is configured as a required local MCP server. Before
+worker dispatch, the orchestrator sets up a missing executable, repository index,
+ignore entry and post-commit hook, preserving existing hook behavior. It confirms
+MCP access to the intended repository; setup failures block dispatch. Source
+inspection confirms critical claims and covers unindexed content. See
+[graph preflight](skills/subagent-driven-development/references/code-review-graph.md).
+
+If Codex warns that `mcp_servers.code-review-graph.type` is ignored, remove the
+`type` line from that existing user `config.toml` table. Native Codex TOML uses
+`command` and `args` for stdio, or `url` for HTTP; do not copy transport metadata
+from a different client's JSON format. An existing manual stdio entry would use:
+
+```toml
+[mcp_servers.code-review-graph]
+command = "code-review-graph"
+args = ["serve"]
+```
+
+The plugin already supplies this server; do not add a second registration just
+to fix the warning. An ignored setting and a startup timeout are separate issues:
+verify the configured executable and MCP handshake if startup still fails. See
+the [official Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
 `context7` is configured as a remote MCP server at `https://mcp.context7.com/mcp`
 for up-to-date library documentation. It answers anonymously (rate-limited); no
@@ -65,7 +84,9 @@ Keep a single `context7` entry so the MCP list has no duplicates.
 - Separate planner and orchestrator launch profiles and workflow skill.
 - Native collaboration waits replace Antigravity's end-turn-after-dispatch rule.
 - Orchestrator alone stages owned files and commits; existing hooks are preserved.
-- Graph tooling is optional and project-defined validation commands take priority.
+- Required graph readiness is established before dispatch; project-defined validation commands establish correctness.
+- Implementers read the bundled ponytail skill in full mode within assigned scope.
+- PowerShell PR descriptions use temporary UTF-8 files with `gh --body-file`.
 
 ## Recommended next changes
 

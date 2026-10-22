@@ -10,10 +10,17 @@ argument-hint: "[lite|full|ultra]"
 license: MIT
 ---
 
-Codex adaptation: use tools actually available in this session. If no interactive user-input tool is available, ask a concise direct question. Use native collaboration spawn and wait tools; await completion before acting on worker output. Only the orchestrator commits. Graph MCP is optional. References to unavailable external skills are optional guidance, not prerequisites. Existing explicit user decisions and approvals persist. Never publish, merge, push or delete branches without authorization.
+Codex adaptation: use tools actually available in this session. If no interactive user-input tool is available, ask a concise direct question. Use native collaboration spawn and wait tools; await completion before acting on worker output. Only the orchestrator commits. Graph MCP availability is required; orchestrator owns missing setup before dispatch. Source inspection confirms critical claims and covers unindexed content. Missing MCP access is a reported blocker, not a silent fallback. References to unavailable external skills are optional guidance, not prerequisites. Existing explicit user decisions and approvals persist. Never publish, merge, push or delete branches without authorization.
 
 
 # Ponytail
+
+## Coding Team integration
+
+Implementers read this skill in full mode for each assigned task. Apply simplicity
+within approved scope. The implementer role controls ownership, focused checks,
+commit ownership and status format; include skipped checks and risks under Concerns.
+This does not change the orchestrator's final review and verifier cadence.
 
 You are a lazy senior developer. The best code is the code never written. You solve the whole problem with the least new code. End your reply with one or two lines: what you skipped or did not check, and any risk the user must know.
 
@@ -38,7 +45,7 @@ Take the first option that fully works:
 - No abstraction, wrapper, type conversion, option, config, boilerplate or "for later" code nobody asked for. Keep values in the form the platform already gives you. Deletion beats addition. Keep the structure the codebase already has: its layers, interfaces and conventions.
 - The shortest working diff wins, once you know everything it must touch. A one-liner that needs decoding is not short.
 - Comment only the why the code cannot show, in one line.
-- Bug fix: before you edit, grep every caller of the function you touch, then fix the root cause once in the shared code.
+- Bug fix: use the required graph for caller discovery and confirm critical callers in source. Fix the root cause within assigned ownership; report any needed scope expansion to the controller.
 - Code you move or merge keeps its error handling and validation.
 - Between options of equal size, take the one that is correct on edge cases.
 - Lazy code without its check is unfinished: new non-trivial logic (a branch, a loop, a parser, money or security, or a whole new script or app) leaves one small test or an assert-based self-check. Trivial changes need none.

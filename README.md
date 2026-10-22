@@ -32,8 +32,8 @@ orchestrator commits task changes.
 | devops-expert | Kubernetes, Terraform, CI/CD and cloud specialist | GPT-6 Sol / medium |
 
 Both plugins bundle `code-review-graph` MCP configuration. Its executable must
-be installed and available on PATH to use graph tools. Codex falls back to source
-inspection when graph tools are unavailable. All roles respect session permissions.
+be installed and available on PATH to use graph tools. Graph readiness is required before worker dispatch; the orchestrator repairs
+missing setup. Source inspection confirms critical claims and covers unindexed content. All roles respect session permissions.
 
 Both plugins also bundle `context7` for current library documentation. It
 answers anonymously (rate-limited), so no key is required; see each plugin's

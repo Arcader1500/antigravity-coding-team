@@ -7,15 +7,15 @@ description: Use when you have a spec or requirements for a multi-step task, bef
 
 ## Overview
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Controller-owned task commits.
 
 Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
+**Context:** The orchestrator confirms the execution branch or isolated worktree before dispatch. Workers do not create workspaces or commit.
 
-**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
+**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<topic>-plan.md`
 - (User preferences for plan location override this default)
 
 ## Scope Check
@@ -52,7 +52,7 @@ Every plan MUST include an `## Execution Waves` section immediately before `## T
   - `**Wave:** N`
   - `**Depends on:** [Task IDs or None]`
   - `**Files Touched:** [exact paths]`
-- **Rule 4 (No Git Hygiene Tasks & Repository Scaffolding):** Never create tasks for git branch creation or working-tree cleanup (`git restore`, `git reset`, `git checkout`); workspace state is managed by the orchestrator. When scaffolding a new repository in Task 1, ensure `.gitignore` includes `.code-review-graph/` and `.agy/` alongside build artifacts and dependencies, and ensure the `code-review-graph` post-commit hook is wired for automated background graph updates.
+- **Rule 4 (No Git Hygiene Tasks & Repository Scaffolding):** Never create worker tasks for git branch creation or working-tree cleanup (`git restore`, `git reset`, `git checkout`). The orchestrator owns workspace state and required graph setup, including `.code-review-graph/` ignore entries and the post-commit hook, before dispatch. New repository scaffolding should preserve these and include `.agy/`, build artifacts and dependencies in `.gitignore` as appropriate.
 
 ### 3. Strict 4-Step TDD Sequence (With Static Asset Exception)
 - **For Python / Logic / Route / View Tasks:** Every task MUST explicitly order these 4 steps:
@@ -69,7 +69,7 @@ Every plan MUST include an `## Execution Waves` section immediately before `## T
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Execution:** Hand off to the AGY orchestrator using bundled subagent-driven-development (or executing-plans in a fresh session). Workers check and self-review; only the controller commits. Independent review and verification follow the last wave. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -127,12 +127,10 @@ def function(input):
 Run: `pytest tests/path/test.py::test_name -v`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Self-review and report to the controller**
 
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
+Report status, changed files, actual check results and concerns. Leave changes
+uncommitted; the controller verifies end-state and commits after all wave writers finish.
 ````
 
 ## No Placeholders
@@ -150,7 +148,7 @@ Every step must contain the actual content an engineer needs. These are **plan f
 - Interface contracts and tricky algorithms only — no full-file code dumps (code blocks < 40% of plan)
 - Grounded external calls with verified `file:line` citations
 - Exact commands with expected output
-- DRY, YAGNI, TDD (Red before Green), frequent commits
+- DRY, YAGNI, TDD (Red before Green), controller-owned task commits
 
 ## Self-Review
 
@@ -166,20 +164,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 ## Execution Handoff
 
-After saving the plan, offer execution choice:
-
-**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
-
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
-
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
-
-**Which approach?"**
-
-**If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
-- Fresh subagent per task + two-stage review
-
-**If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
-- Batch execution with checkpoints for review
+After plan-critic returns READY, provide the plan path for handoff to orchestrator.
+Use bundled `subagent-driven-development`, or `executing-plans` in a fresh session.
+Preserve required plan approval. Both entry points use the same wave, commit,
+review and verification contract; do not offer inline execution as a competing default.

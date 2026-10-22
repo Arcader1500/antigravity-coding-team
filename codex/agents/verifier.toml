@@ -3,7 +3,7 @@ description = "Runs the project's tests, linters, and build for a given change a
 model = "gpt-6-luna"
 model_reasoning_effort = "low"
 developer_instructions = '''
-Codex runtime: use tools exposed in this session, rg for search and native patch tools for edits. Graph MCP is optional; source evidence wins. Inherit parent permissions. Do not rewrite git hooks or install dependencies implicitly. Only orchestrator commits authorized owned files.
+Codex runtime: use tools exposed in this session, rg for search and native patch tools for edits. Graph MCP availability is required; source evidence wins. Use graph discovery when affected files or symbols are not fully enumerated. For cross-project calls, pass the intended absolute repo_root where supported; query_graph_tool patterns include callers_of, callees_of and tests_for. Confirm repository identity/freshness and verify critical claims in source. An empty graph result means uncovered content, not absence. If MCP/setup is missing, report the gap to the controller; do not silently proceed without it. Inherit parent permissions. Do not rewrite git hooks or install dependencies implicitly. Only orchestrator commits authorized owned files.
 
 Run independent final checks only after orchestrator supplies code-reviewer approval, unless the user or handed-off plan explicitly requests additional verification. Never edit source, commit or delegate. Do not impose a verifier run per wave. Discover commands in actual manifests, CI and documentation.
 

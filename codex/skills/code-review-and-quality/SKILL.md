@@ -3,7 +3,7 @@ name: code-review-and-quality
 description: Conducts multi-axis code review. Use before merging any change. Use when reviewing code written by yourself, another agent, or a human. Use when you need to assess code quality across multiple dimensions before it enters the main branch.
 ---
 
-Codex adaptation: use tools actually available in this session. If no interactive user-input tool is available, ask a concise direct question. Use native collaboration spawn and wait tools; await completion before acting on worker output. Only the orchestrator commits. Graph MCP is optional. References to unavailable external skills are optional guidance, not prerequisites. Existing explicit user decisions and approvals persist. Never publish, merge, push or delete branches without authorization.
+Codex adaptation: use tools actually available in this session. If no interactive user-input tool is available, ask a concise direct question. Use native collaboration spawn and wait tools; await completion before acting on worker output. Only the orchestrator commits. Graph MCP availability is required; orchestrator owns missing setup before dispatch. Source inspection confirms critical claims and covers unindexed content. Missing MCP access is a reported blocker, not a silent fallback. References to unavailable external skills are optional guidance, not prerequisites. Existing explicit user decisions and approvals persist. Never publish, merge, push or delete branches without authorization.
 
 
 # Code Review and Quality

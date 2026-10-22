@@ -1,19 +1,19 @@
 # Code Quality Reviewer Prompt Template
 
-Use this template when dispatching a code quality reviewer subagent.
+Use this template for final independent code-reviewer review or focused re-review.
 
-**Purpose:** Verify implementation is well-built (clean, tested, maintainable)
+**Purpose:** Verify spec compliance and code quality against approved requirements.
 
-**Only dispatch after spec compliance review passes.**
+**Dispatch after all implementation waves and outstanding writers finish.**
 
 ```
-Task tool (general-purpose):
-  Use the code-review skill.
+invoke_subagent with agent: code-reviewer:
+  Use the bundled code-review-and-quality skill.
   Start with the code-review-graph MCP — the review scope is not enumerated, so the graph is how you find what the change affects: `detect_changes_tool` for changed files, `get_review_context_tool` for risk-scored snippets, `get_impact_radius_tool` for blast radius, `get_affected_flows_tool` for impacted flows, `query_graph_tool` (`tests_for`) for caller/test coverage. Name the graph tools you called in your report.
 
   DESCRIPTION: [task summary, from implementer's report]
-  PLAN_OR_REQUIREMENTS: Task N from [plan-file]
-  BASE_SHA: [commit before task]
+  PLAN_OR_REQUIREMENTS: [approved spec and full plan; relevant tasks for re-review]
+  BASE_SHA: [commit before implementation]
   HEAD_SHA: [current commit]
 ```
 
@@ -23,4 +23,4 @@ Task tool (general-purpose):
 - Is the implementation following the file structure from the plan?
 - Did this implementation create new files that are already large, or significantly grow existing files? (Don't flag pre-existing file sizes — focus on what this change contributed.)
 
-**Code reviewer returns:** Strengths, Issues (Critical/Important/Minor), Assessment
+**Code reviewer returns:** Blocker/Important/Nit findings with file:line and a concrete fix; verdict Approve / Approve with comments / Request changes.

@@ -1,11 +1,12 @@
 # Spec Compliance Reviewer Prompt Template
 
-Use this template when dispatching a spec compliance reviewer subagent.
+Use this optional template with the existing code-reviewer role for a focused
+spec-compliance question. It is not a mandatory per-task stage.
 
 **Purpose:** Verify implementer built what was requested (nothing more, nothing less)
 
 ```
-Task tool (general-purpose):
+invoke_subagent with agent: code-reviewer:
   description: "Review spec compliance for Task N"
   prompt: |
     You are reviewing whether an implementation matches its specification.
