@@ -6,7 +6,7 @@ Each platform has an independent plugin, agent definitions, skills and installer
 ```text
 antigravity/              Antigravity plugin, agents, rules and eight skills
   install.bat/.ps1/.sh    Install or update using agy
-codex/                   Codex plugin, seven TOML agents and twelve skills
+codex/                   Codex plugin, eight TOML agents and twelve skills
   install.bat/.ps1        Install or update using Codex
   scripts/               Configuration validation
 .agents/plugins/         Local Codex marketplace pointing to ./codex
@@ -29,10 +29,15 @@ orchestrator commits task changes.
 | implementer | One scoped implementation task | GPT-6 Sol / medium |
 | code-reviewer | Diff review and verdict | GPT-6 Sol / high |
 | verifier | Tests, lint, typecheck and build evidence | GPT-6 Luna / low |
+| devops-expert | Kubernetes, Terraform, CI/CD and cloud specialist | GPT-6 Sol / medium |
 
 Both plugins bundle `code-review-graph` MCP configuration. Its executable must
 be installed and available on PATH to use graph tools. Codex falls back to source
 inspection when graph tools are unavailable. All roles respect session permissions.
+
+Both plugins also bundle `context7` for current library documentation. It
+answers anonymously (rate-limited), so no key is required; see each plugin's
+README for the optional key setup.
 
 ## Run with Antigravity
 

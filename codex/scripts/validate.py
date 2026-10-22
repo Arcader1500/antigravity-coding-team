@@ -13,6 +13,7 @@ expected = {
     'implementer': ('gpt-6-sol', 'medium'),
     'code-reviewer': ('gpt-6-sol', 'high'),
     'verifier': ('gpt-6-luna', 'low'),
+    'devops-expert': ('gpt-6-sol', 'medium'),
 }
 cache = home / 'plugins/cache/coding-team-local/coding-team/1.0.0'
 for name, settings in expected.items():
@@ -46,4 +47,4 @@ for path in skills:
     text = path.read_text(encoding='utf-8-sig')
     assert text.startswith('---\n') and '\nname:' in text and '\ndescription:' in text, path
     assert 'superpowers:' not in text, path
-print('PASS: 7 role mappings, 14 matching agent files, 2 profiles, 12 skills, entry-point links, installed cache parity.')
+print('PASS: 8 role mappings, 16 matching agent files, 2 profiles, 12 skills, entry-point links, installed cache parity.')
