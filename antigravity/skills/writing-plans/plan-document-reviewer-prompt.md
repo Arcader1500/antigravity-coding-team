@@ -1,13 +1,13 @@
 # Plan Document Reviewer Prompt Template
 
-Use this template when dispatching a plan document reviewer subagent.
+Use this template with the existing plan-critic role after spec approval.
 
 **Purpose:** Verify the plan is complete, matches the spec, and has proper task decomposition.
 
 **Dispatch after:** The complete plan is written.
 
 ```
-Task tool (general-purpose):
+invoke_subagent with agent: plan-critic:
   description: "Review plan document"
   prompt: |
     You are a plan document reviewer. Verify this plan is complete and ready for implementation.
@@ -37,7 +37,7 @@ Task tool (general-purpose):
 
     ## Plan Review
 
-    **Status:** Approved | Issues Found
+    **Status:** READY | Issues Found
 
     **Issues (if any):**
     - [Task X, Step Y]: [specific issue] - [why it matters for implementation]

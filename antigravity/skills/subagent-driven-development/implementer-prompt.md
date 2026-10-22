@@ -3,7 +3,7 @@
 Use this template when dispatching an implementer subagent.
 
 ```
-Task tool (general-purpose):
+invoke_subagent with agent: implementer:
   description: "Implement Task N: [task name]"
   prompt: |
     You are implementing Task N: [task name]
@@ -32,11 +32,16 @@ Task tool (general-purpose):
     1. Implement exactly what the task specifies
     2. Write tests (following TDD if task says to)
     3. Verify implementation works (In TypeScript or compiled repos, always run `npx tsc --noEmit` in addition to test runner and build script before reporting DONE)
-    4. Commit your work
+    4. Leave changes uncommitted; only the controller runs git commit
     5. Self-review (see below)
     6. Report back
 
     Work from: [directory]
+    Owned files: [exact files from task]
+    You are not alone in this checkout. Preserve other workers' edits. Report any
+    required scope expansion before editing outside your ownership.
+    Apply the loaded ponytail skill in full mode within this task's approved scope;
+    the implementer role controls checks, status reporting and the no-commit rule.
 
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.

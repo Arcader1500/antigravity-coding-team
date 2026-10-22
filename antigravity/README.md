@@ -62,6 +62,9 @@ Then **restart `agy`** (or your Antigravity IDE session) — a newly installed o
 > `researcher`, `plan-critic`, `code-reviewer` — must call it before scanning files.
 > `implementer` receives its file list from the controller, so the graph is optional there
 > (it stays available for grounding checks).
+> Graph readiness is required: the orchestrator sets up a missing executable, index,
+> ignore entry and post-commit hook before dispatch. If setup or MCP access fails,
+> execution is blocked until repaired. See [graph rules](rules/code-review-graph.md).
 
 ## What's inside
 
@@ -79,7 +82,7 @@ permissions.sample.json     project-agnostic permission grants (not auto-loaded)
 |---|---|---|
 | `orchestrator` | runs a written plan end to end; the only agent that commits | `implementer`, `code-reviewer`, `verifier` |
 | `planner` | researches, writes spec, pauses for spec approval, then writes plan + critic loop; never edits source | `researcher`, `plan-critic`, `devops-expert` |
-| `implementer` | one plan task, write tools, never commits | — |
+| `implementer` | one plan task, ponytail full mode, write tools, never commits | — |
 | `researcher` | read-only, graph-first, cited facts | — |
 | `plan-critic` | red-teams a plan, findings only | — |
 | `code-reviewer` | five-axis review + verdict | — |
