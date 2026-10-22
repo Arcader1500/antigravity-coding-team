@@ -5,7 +5,7 @@ The original Antigravity manifest, agents and installer remain intact.
 `codex/` contains the independently maintained Codex plugin. From the repository root, reinstall:
 
 ```powershell
-pwsh -File .\codex\install.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1
 ```
 
 Start a new chat after installing; restart Codex if the skills list is stale.

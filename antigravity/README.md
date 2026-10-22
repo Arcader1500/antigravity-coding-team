@@ -17,6 +17,10 @@ Run the included install script to validate, install, or update the plugin:
 install.bat
 ```
 
+Close Antigravity (or stop the running `agy` process) before installing: it
+holds the installed plugin directory open, and the copy then fails with
+`The process cannot access the file because it is being used by another process`.
+
 **Bash (Linux / macOS / Git Bash):**
 ```bash
 ./install.sh

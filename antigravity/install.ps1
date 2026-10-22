@@ -18,6 +18,17 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Invoke-NativeCommand {
+    # Windows PowerShell 5.1 turns native stderr into a terminating error when it
+    # is merged with 2>&1 under ErrorActionPreference=Stop; PowerShell 7 does not.
+    # Capture it as text on both and let the caller decide on the exit code.
+    param([scriptblock]$Command)
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try { $output = & $Command 2>&1 } finally { $ErrorActionPreference = $previous }
+    [pscustomobject]@{ Output = @($output | ForEach-Object { "$_" }); ExitCode = $LASTEXITCODE }
+}
+
 $PluginDir = $PSScriptRoot
 if (-not $PluginDir) {
     $PluginDir = (Get-Location).Path
@@ -44,8 +55,9 @@ if (-not $AgyCmd) {
 }
 
 Write-Host "[1/4] Validating plugin with 'agy plugin validate --strict'..." -ForegroundColor Yellow
-$validateOutput = & $AgyPath plugin validate "$PluginDir" --strict 2>&1
-$validateExitCode = $LASTEXITCODE
+$validate = Invoke-NativeCommand { & $AgyPath plugin validate "$PluginDir" --strict }
+$validateOutput = $validate.Output
+$validateExitCode = $validate.ExitCode
 
 if ($validateExitCode -ne 0) {
     Write-Host "`nPlugin validation failed:" -ForegroundColor Red
@@ -62,8 +74,9 @@ if ($ValidateOnly) {
 }
 
 Write-Host "[2/4] Installing/Updating plugin in Antigravity..." -ForegroundColor Yellow
-$installOutput = & $AgyPath plugin install "$PluginDir" 2>&1
-$installExitCode = $LASTEXITCODE
+$install = Invoke-NativeCommand { & $AgyPath plugin install "$PluginDir" }
+$installOutput = $install.Output
+$installExitCode = $install.ExitCode
 
 if ($installExitCode -ne 0) {
     Write-Host "`nInstallation failed:" -ForegroundColor Red
