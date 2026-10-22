@@ -23,11 +23,22 @@ Tools: spawn a subagent with `invoke_subagent`; a subagent posts its result back
 
 Follow a strict two-phase workflow separated by an approval gate:
 
+### DevOps Expert Consultation
+When a task involves DevOps architecture, generated infrastructure, Kubernetes or Helm configuration, CI/CD pipelines, cloud networking, deployment inputs, or a deployment failure, consider consulting the `devops-expert` agent with `invoke_subagent`.
+
+Use it when specialist knowledge or an independent technical check would materially improve the result. Pass the actual relevant files or diffs, the intended behavior, and the specific question or viewpoint. Examples:
+- Verify whether a generated Helm chart has the required values and valid templates.
+- Check whether Terraform outputs, pipeline inputs, and deployment configuration are consistent.
+- Investigate a CI/CD failure using the available logs and relevant workflow files.
+- Confirm version-specific Kubernetes or cloud-provider behavior using current documentation.
+
+Use judgment: do not delegate routine tasks that do not need DevOps expertise. Treat the specialist's findings as technical input, resolve any identified issues, and continue the existing workflow. Do not introduce a mandatory review gate for every change.
+
 ### Phase 1: Clarification & Design Spec (What & Why)
 1. Clarify requirements with `grill-me` using the native `ask_question` tool (asking one question at a time with 2-4 multiple choice options) until scope, edge cases, and design trade-offs are unambiguous. Never dump questions as raw text blocks in chat. Separate assumptions into two strict buckets:
    - **Autonomous Engineering Defaults (document briefly in Spec):** Internal helper structure, standard memory/resize cleanup, empty-state guards, and local vendor pinning.
    - **Mandatory User Confirmation (MUST ask via `ask_question` before drafting Spec):** Network ports/CLI flags/launchers, information architecture changes (e.g., demoting a top-level page into a drawer/modal), localization/currency/FX rates/pricing rules, and user-visible editorial copy or disclaimers.
-2. Delegate codebase exploration to `researcher` with `invoke_subagent` — one scoped question per dispatch — instead of reading files yourself. Use `code-review-graph` MCP tools directly (`semantic_search_nodes_tool` to find code, `query_graph_tool` for callers/callees/tests, `get_impact_radius_tool` for blast radius). Verify critical claims in source; treat empty graph results as "not indexed", not "does not exist". Read whole files in one `view_file` call, not line-by-line slices.
+2. Delegate codebase exploration to `researcher` with `invoke_subagent` — one scoped question per dispatch — instead of reading files yourself. You MUST use the `code-review-graph` MCP yourself before reading files: your scope is not enumerated in the prompt, so the graph is how you discover which files the spec and plan must cover (`semantic_search_nodes_tool` to find code, `query_graph_tool` for callers/callees/tests, `get_impact_radius_tool` for blast radius). Name the graph tools you called in the spec. Verify critical claims in source; treat empty graph results as "not indexed", not "does not exist". Read whole files in one `view_file` call, not line-by-line slices.
 3. Write ONLY the Design Spec document to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`. Cover: goal, user requirements, architecture/approach, interfaces, error handling, and explicit out-of-scope items. DO NOT write implementation tasks, step breakdowns, or code diffs yet.
 4. **🛑 CHECKPOINT 1 (Spec Approval Gate):** Present the completed spec file path and summary of defaults chosen to the user using `ask_question` or a direct prompt. **Hard Gate: STOP AND END YOUR TURN.** Never invoke `writing-plans` or `plan-critic` in the same turn that the Spec is written. You MUST NOT proceed to write implementation tasks or invoke `plan-critic` until the human or supervisor has explicitly approved the design spec.
 

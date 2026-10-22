@@ -5,7 +5,7 @@ The original Antigravity manifest, agents and installer remain intact.
 `codex/` contains the independently maintained Codex plugin. From the repository root, reinstall:
 
 ```powershell
-pwsh -File .\codex\install.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1
 ```
 
 Start a new chat after installing; restart Codex if the skills list is stale.
@@ -22,8 +22,9 @@ compatibility entry point that routes to the appropriate workflow.
 | implementer | gpt-6-sol | medium |
 | code-reviewer | gpt-6-sol | high |
 | verifier | gpt-6-luna | low |
+| devops-expert | gpt-6-sol | medium |
 
-All seven native custom agents are installed under `~/.codex/agents/` for use across projects. They inherit session permissions.
+All eight native custom agents are installed under `~/.codex/agents/` for use across projects. They inherit session permissions.
 Read-only role instructions do not establish a separate read-only sandbox.
 
 For main-chat roles, select GPT-6 Sol and the listed effort in the desktop
@@ -42,6 +43,19 @@ existing agent files and existing profiles before replacing them.
 `code-review-graph serve` is configured as a local MCP server. Install its
 executable and make it available on PATH to use it. Source inspection remains
 the fallback when graph tools are unavailable or stale.
+
+`context7` is configured as a remote MCP server at `https://mcp.context7.com/mcp`
+for up-to-date library documentation. It answers anonymously (rate-limited); no
+OAuth step is required. To use your own key, add it to your Codex MCP
+configuration, for example in `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+bearer_token_env_var = "CONTEXT7_API_KEY"
+```
+
+Keep a single `context7` entry so the MCP list has no duplicates.
 
 ## Changes made for Codex
 

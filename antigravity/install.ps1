@@ -18,6 +18,17 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Invoke-NativeCommand {
+    # Windows PowerShell 5.1 turns native stderr into a terminating error when it
+    # is merged with 2>&1 under ErrorActionPreference=Stop; PowerShell 7 does not.
+    # Capture it as text on both and let the caller decide on the exit code.
+    param([scriptblock]$Command)
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try { $output = & $Command 2>&1 } finally { $ErrorActionPreference = $previous }
+    [pscustomobject]@{ Output = @($output | ForEach-Object { "$_" }); ExitCode = $LASTEXITCODE }
+}
+
 $PluginDir = $PSScriptRoot
 if (-not $PluginDir) {
     $PluginDir = (Get-Location).Path
@@ -43,9 +54,10 @@ if (-not $AgyCmd) {
     $AgyPath = $AgyCmd.Source
 }
 
-Write-Host "[1/3] Validating plugin with 'agy plugin validate --strict'..." -ForegroundColor Yellow
-$validateOutput = & $AgyPath plugin validate "$PluginDir" --strict 2>&1
-$validateExitCode = $LASTEXITCODE
+Write-Host "[1/4] Validating plugin with 'agy plugin validate --strict'..." -ForegroundColor Yellow
+$validate = Invoke-NativeCommand { & $AgyPath plugin validate "$PluginDir" --strict }
+$validateOutput = $validate.Output
+$validateExitCode = $validate.ExitCode
 
 if ($validateExitCode -ne 0) {
     Write-Host "`nPlugin validation failed:" -ForegroundColor Red
@@ -61,9 +73,10 @@ if ($ValidateOnly) {
     exit 0
 }
 
-Write-Host "[2/3] Installing/Updating plugin in Antigravity..." -ForegroundColor Yellow
-$installOutput = & $AgyPath plugin install "$PluginDir" 2>&1
-$installExitCode = $LASTEXITCODE
+Write-Host "[2/4] Installing/Updating plugin in Antigravity..." -ForegroundColor Yellow
+$install = Invoke-NativeCommand { & $AgyPath plugin install "$PluginDir" }
+$installOutput = $install.Output
+$installExitCode = $install.ExitCode
 
 if ($installExitCode -ne 0) {
     Write-Host "`nInstallation failed:" -ForegroundColor Red
@@ -74,7 +87,27 @@ if ($installExitCode -ne 0) {
     Write-Host "Plugin installed/updated successfully!`n" -ForegroundColor Green
 }
 
-Write-Host "[3/3] Verifying installed plugins..." -ForegroundColor Yellow
+# Apply machine-local MCP overrides (e.g. context7 API key) on top of the
+# installed plugin's mcp_config.json. The override file is git-ignored.
+$PluginName = (Get-Content (Join-Path $PluginDir "plugin.json") -Raw | ConvertFrom-Json).name
+$InstalledConfig = Join-Path $env:USERPROFILE ".gemini\config\plugins\$PluginName\mcp_config.json"
+$LocalOverride = Join-Path $PluginDir "mcp_config.local.json"
+
+Write-Host "[3/4] Applying local MCP overrides (mcp_config.local.json)..." -ForegroundColor Yellow
+if ((Test-Path $LocalOverride) -and (Test-Path $InstalledConfig)) {
+    $base = Get-Content $InstalledConfig -Raw | ConvertFrom-Json
+    $local = Get-Content $LocalOverride -Raw | ConvertFrom-Json
+    foreach ($entry in $local.mcpServers.PSObject.Properties) {
+        $base.mcpServers | Add-Member -NotePropertyName $entry.Name -NotePropertyValue $entry.Value -Force
+    }
+    $merged = $base | ConvertTo-Json -Depth 10
+    [System.IO.File]::WriteAllText($InstalledConfig, $merged, (New-Object System.Text.UTF8Encoding $false))
+    Write-Host "Applied: $($local.mcpServers.PSObject.Properties.Name -join ', ')`n" -ForegroundColor Green
+} else {
+    Write-Host "No local overrides to apply (mcp_config.local.json missing or plugin not installed).`n" -ForegroundColor DarkGray
+}
+
+Write-Host "[4/4] Verifying installed plugins..." -ForegroundColor Yellow
 & $AgyPath plugin list
 
 Write-Host "`n=============================================" -ForegroundColor Green

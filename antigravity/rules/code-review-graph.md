@@ -9,12 +9,15 @@ This project uses `code-review-graph` for persistent structural code intelligenc
 
 ## Operating Rules
 
-### 1. Read-Only MCP Usage for Discovery & Review
-- Specialized agents (`researcher`, `planner`, `plan-critic`, `implementer`, `code-reviewer`) must prioritize the `code-review-graph` MCP tools before falling back to broad file scans or raw `grep`:
+### 1. Mandatory Graph Use for Discovery & Review
+- **Trigger:** You MUST use the `code-review-graph` MCP before any broad file scan or raw `grep` whenever the task does not enumerate the files and symbols involved. Nothing in the prompt tells you which files matter — the graph is how you find out.
+- **Who it binds:** `planner`, `orchestrator`, `researcher`, `plan-critic` and `code-reviewer` always. `implementer` and `verifier` may use it: the controller gives the implementer its file list, so the graph is optional there, but use it when the task references a symbol or file it does not name.
+- Tools by question:
   - Locate code entities and symbols: `semantic_search_nodes_tool`
   - Inspect callers, callees, and test mappings: `query_graph_tool` (`tests_for`, `callers`, `callees`)
   - Measure blast radius and affected execution paths: `get_impact_radius_tool`, `detect_changes_tool`, and `get_affected_flows_tool`
   - Retrieve risk-scored context: `get_review_context_tool`
+- State in your report which graph tools you called. Skipping the graph silently on a task that triggers the rule is a defect.
 - When the graph and the on-disk source disagree, the on-disk source code wins. An empty graph result means "not indexed", not "does not exist" — verify with `view_file`.
 
 ### 2. No Manual Mid-Wave Graph Rebuilds by Subagents

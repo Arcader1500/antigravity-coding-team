@@ -6,7 +6,7 @@ Each platform has an independent plugin, agent definitions, skills and installer
 ```text
 antigravity/              Antigravity plugin, agents, rules and eight skills
   install.bat/.ps1/.sh    Install or update using agy
-codex/                   Codex plugin, seven TOML agents and twelve skills
+codex/                   Codex plugin, eight TOML agents and twelve skills
   install.bat/.ps1        Install or update using Codex
   scripts/               Configuration validation
 .agents/plugins/         Local Codex marketplace pointing to ./codex
@@ -29,10 +29,15 @@ orchestrator commits task changes.
 | implementer | One scoped implementation task | GPT-6 Sol / medium |
 | code-reviewer | Diff review and verdict | GPT-6 Sol / high |
 | verifier | Tests, lint, typecheck and build evidence | GPT-6 Luna / low |
+| devops-expert | Kubernetes, Terraform, CI/CD and cloud specialist | GPT-6 Sol / medium |
 
 Both plugins bundle `code-review-graph` MCP configuration. Its executable must
 be installed and available on PATH to use graph tools. Codex falls back to source
 inspection when graph tools are unavailable. All roles respect session permissions.
+
+Both plugins also bundle `context7` for current library documentation. It
+answers anonymously (rate-limited), so no key is required; see each plugin's
+README for the optional key setup.
 
 ## Run with Antigravity
 
@@ -51,7 +56,10 @@ On Linux, macOS or Git Bash:
 bash antigravity/install.sh
 ```
 
-Restart Antigravity after installing. Use `/agents` to choose `planner` or
+Restart Antigravity after installing. Close the running `agy` process *before*
+installing: it locks the installed plugin directory and the copy fails with
+`The process cannot access the file because it is being used by another process`.
+Use `/agents` to choose `planner` or
 `orchestrator`, and `/plugin` to inspect the bundle. Manual installation:
 `agy plugin install ./antigravity`.
 
@@ -59,18 +67,19 @@ See [Antigravity details](antigravity/README.md) for permissions and packaging.
 
 ## Run with Codex
 
-Requires Codex desktop / CLI with `codex` on PATH, **PowerShell 7** (`pwsh`), and
-access to the configured OpenAI models. On Windows, double-click
-**codex/install.bat**, or run from this repository's root:
+Requires Codex desktop / CLI with `codex` on PATH, **Windows PowerShell 5.1**
+(`powershell`, the default on Windows), and access to the configured OpenAI
+models. On Windows, double-click **codex/install.bat**, or run from this
+repository's root:
 
 ```powershell
-pwsh -NoProfile -File .\codex\install.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1
 # Validate structure without installing:
-pwsh -NoProfile -File .\codex\install.ps1 -ValidateOnly
+powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1 -ValidateOnly
 ```
 
 The installer registers this repository's marketplace, installs/enables
-`coding-team`, copies seven agents into `~/.codex/agents/`, and installs planner
+`coding-team`, copies eight agents into `~/.codex/agents/`, and installs planner
 and orchestrator CLI profiles. Differing existing agent files and existing
 profiles are backed up. Run the same installer after edits to refresh the cache.
 
@@ -129,7 +138,7 @@ workflow changes consistent across both where appropriate.
 
 ```powershell
 agy plugin validate .\antigravity --strict
-pwsh -NoProfile -File .\codex\install.ps1 -ValidateOnly
+powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1 -ValidateOnly
 # Deeper checks including installed-file parity (Python 3.11+; after installation):
 python .\codex\scripts\validate.py
 ```

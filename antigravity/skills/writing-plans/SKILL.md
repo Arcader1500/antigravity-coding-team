@@ -40,6 +40,7 @@ Never write complete function bodies, full file replacements, or raw HTML/CSS fi
 Instead of full implementations, every task must specify:
 - **Exact Signatures & Types:** Function/class definitions, argument types, return types, and dataclass/Pydantic schemas.
 - **Grounded External Calls (Anti-Hallucination):** Every call to an existing repository function, method, or class MUST cite its exact definition path and line number verified on disk (e.g., `source.scan_usage(brain_root, extractor_path)` — ref `agy_dash/source.py:75`). Never guess or invent helper names.
+- **Grounded File Lists:** Every path in `**Files Touched:**` MUST come from the `code-review-graph` MCP (`semantic_search_nodes_tool` to locate the code, `get_impact_radius_tool` for the files a change actually reaches) or a verified directory listing — never from a guess about where code "probably" lives.
 - **Core Algorithmic/Tricky Snippets Only:** Only inline implementation code when demonstrating non-obvious math, tricky library wiring (e.g., complex ECharts series stacking), or exact regex/SQL queries (<30 lines).
 - **Template & UI Contracts:** For HTML/Jinja2/CSS tasks, specify the file path, parent template/block hierarchy, required context variables (with exact dict keys/types), HTMX target IDs/endpoints, and key DOM selectors—leave the markup authoring to `implementer`.
 

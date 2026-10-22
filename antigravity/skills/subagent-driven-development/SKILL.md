@@ -17,6 +17,7 @@ Execute plan by dispatching fresh subagent per task, with two-stage review after
 
 1. **Strict Wave Adherence:** Always follow the `## Execution Waves` table and `**Depends on:**` headers defined in the plan. Never dispatch a task in an earlier wave than specified, even if its file paths appear disjoint.
 2. **No Silent Reflection Hacks for Bad Plan Symbols:** When dispatching `implementer` subagents, instruct them that if a plan references an existing repository function or attribute that does not exist on disk, they must inspect the target module for the actual function signature, use the real function, and report the discrepancy under `DONE_WITH_CONCERNS`. Never wrap missing/hallucinated function names in `getattr(module, "hallucinated_name", None)` fallback shims.
+3. **Code-Review Graph for Scope:** Before dispatching a wave, call the `code-review-graph` MCP (`get_impact_radius_tool` on the files that wave touches, `query_graph_tool` for the callers and tests of the symbols it changes) whenever the plan does not enumerate every affected file. Use it to widen `**Files Touched:**` and to catch cross-wave file collisions the plan missed. Never dispatch a wave whose blast radius reaches files another wave owns.
 
 ## When to Use
 
