@@ -39,14 +39,46 @@ function Remove-CodeReviewGraphMcpConfig {
 $repoRoot = Split-Path $PSScriptRoot -Parent
 & "$PSScriptRoot/scripts/validate.ps1"
 if ($ValidateOnly) { return }
-if (-not (Get-Command codex -ErrorAction SilentlyContinue)) { throw 'Codex CLI was not found. Install Codex desktop and ensure codex is on PATH.' }
 $codexDir = Join-Path $env:USERPROFILE '.codex'
 Remove-CodeReviewGraphMcpConfig (Join-Path $codexDir 'config.toml')
-# CLI handles installation/cache/config instead of manually imitating its state.
-$marketplace = Invoke-NativeCommand { & codex plugin marketplace add $repoRoot }
-if ($marketplace.ExitCode -ne 0) { throw "Marketplace registration failed. $($marketplace.Output)" }
-$install = Invoke-NativeCommand { & codex plugin add coding-team@coding-team-local --json }
-if ($install.ExitCode -ne 0) { throw "Plugin installation failed. $($install.Output)" }
+$codexCommand = Get-Command codex -ErrorAction SilentlyContinue
+if ($codexCommand) {
+    # Let the CLI manage its marketplace registry and installed plugin cache.
+    $marketplace = Invoke-NativeCommand { & $codexCommand.Source plugin marketplace add $repoRoot }
+    if ($marketplace.ExitCode -ne 0) { throw "Marketplace registration failed. $($marketplace.Output)" }
+    $install = Invoke-NativeCommand { & $codexCommand.Source plugin add coding-team@coding-team-local --json }
+    if ($install.ExitCode -ne 0) { throw "Plugin installation failed. $($install.Output)" }
+} else {
+    # ChatGPT desktop discovers personal local marketplaces without the CLI.
+    $pluginTarget = Join-Path $codexDir 'plugins/coding-team'
+    New-Item -ItemType Directory -Force $pluginTarget | Out-Null
+    Copy-Item "$PSScriptRoot\*" $pluginTarget -Recurse -Force
+
+    $marketplaceFile = Join-Path $env:USERPROFILE '.agents/plugins/marketplace.json'
+    New-Item -ItemType Directory -Force (Split-Path $marketplaceFile) | Out-Null
+    if (Test-Path $marketplaceFile) {
+        $catalog = Get-Content $marketplaceFile -Raw -Encoding UTF8 | ConvertFrom-Json
+    } else {
+        $catalog = [pscustomobject]@{
+            name = 'coding-team-local'
+            interface = [pscustomobject]@{ displayName = 'Local Coding Team' }
+            plugins = @()
+        }
+    }
+    if (-not $catalog.PSObject.Properties['plugins']) {
+        $catalog | Add-Member -NotePropertyName plugins -NotePropertyValue @()
+    }
+    $entries = @($catalog.plugins | Where-Object name -NE 'coding-team')
+    $entries += [pscustomobject]@{
+        name = 'coding-team'
+        source = [pscustomobject]@{ source = 'local'; path = './.codex/plugins/coding-team' }
+        category = 'Productivity'
+        policy = [pscustomobject]@{ authentication = 'ON_INSTALL'; installation = 'AVAILABLE' }
+    }
+    $catalog.plugins = $entries
+    Copy-Item $marketplaceFile "$marketplaceFile.backup-$(Get-Date -Format yyyyMMddHHmmss)" -ErrorAction SilentlyContinue
+    [System.IO.File]::WriteAllText($marketplaceFile, ($catalog | ConvertTo-Json -Depth 20) + "`n", (New-Object System.Text.UTF8Encoding $false))
+}
 New-Item -ItemType Directory -Force "$codexDir/agents" | Out-Null
 foreach ($file in Get-ChildItem "$PSScriptRoot/agents" -Filter '*.toml') {
     $target = Join-Path "$codexDir/agents" $file.Name
@@ -88,9 +120,14 @@ $sessionStart = @($current.hooks.SessionStart | Where-Object { $_ }) + @($templa
 $current.hooks | Add-Member -NotePropertyName SessionStart -NotePropertyValue $sessionStart -Force
 # Codex's JSON parser rejects a UTF-8 BOM.
 [System.IO.File]::WriteAllText($hookFile, ($current | ConvertTo-Json -Depth 20) + "`n", (New-Object System.Text.UTF8Encoding $false))
-$list = Invoke-NativeCommand { & codex plugin list --marketplace coding-team-local --json }
-if ($list.ExitCode -ne 0) { throw "Installation verification failed. $($list.Output)" }
-Write-Host $list.Output -ForegroundColor DarkGray
-Write-Host 'Installed. Start a new Codex chat to load the plugin. CLI: codex -p coding-team-planner or codex -p coding-team-orchestrator.'
+if ($codexCommand) {
+    $list = Invoke-NativeCommand { & $codexCommand.Source plugin list --marketplace coding-team-local --json }
+    if ($list.ExitCode -ne 0) { throw "Installation verification failed. $($list.Output)" }
+    Write-Host $list.Output -ForegroundColor DarkGray
+    Write-Host 'Installed through Codex CLI. Start a new Codex chat to load the plugin.'
+} else {
+    Write-Host "Desktop marketplace configured at $marketplaceFile. Restart ChatGPT, then install Coding Team from the Personal marketplace."
+}
+Write-Host 'CLI profiles: codex -p coding-team-planner or codex -p coding-team-orchestrator.'
 Write-Host 'Restart the Codex app (or run: codex app-server daemon restart) so it reloads ~/.codex/hooks.json.'
 Write-Host 'Run /hooks in Codex once to trust the SessionStart hook, otherwise Codex skips it until reviewed.'

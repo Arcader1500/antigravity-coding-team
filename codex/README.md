@@ -9,6 +9,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1
 ```
 
 Start a new chat after installing; restart Codex if the skills list is stale.
+The installer uses Codex CLI when `codex` is on `PATH`. Without it, it stages
+the plugin under `%USERPROFILE%\.codex\plugins` and registers a personal local
+marketplace for the ChatGPT desktop app. Restart ChatGPT, then install Coding
+Team from the **Personal** marketplace in the Plugins Directory.
 Use `$team-plan` to plan a feature, `$team-run` to execute an approved plan, or
 `$team-review` for an independent local diff review. `$coding-team` remains a
 compatibility entry point that routes to the appropriate workflow.
