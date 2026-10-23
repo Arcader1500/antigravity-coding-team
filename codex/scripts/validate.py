@@ -6,14 +6,14 @@ import tomllib
 root = Path(__file__).resolve().parent.parent
 home = Path.home() / '.codex'
 expected = {
-    'planner': ('gpt-6-sol', 'high'),
-    'plan-critic': ('gpt-6-sol', 'high'),
+    'planner': ('gpt-6.1-sol', 'medium'),
+    'plan-critic': ('gpt-6.1-sol', 'medium'),
     'researcher': ('gpt-6-luna', 'low'),
-    'orchestrator': ('gpt-6-sol', 'low'),
-    'implementer': ('gpt-6-sol', 'medium'),
-    'code-reviewer': ('gpt-6-sol', 'high'),
+    'orchestrator': ('gpt-6.1-sol', 'low'),
+    'implementer': ('gpt-6-luna', 'medium'),
+    'code-reviewer': ('gpt-6.1-sol', 'medium'),
     'verifier': ('gpt-6-luna', 'low'),
-    'devops-expert': ('gpt-6-sol', 'medium'),
+    'devops-expert': ('gpt-6-luna', 'medium'),
 }
 cache = home / 'plugins/cache/coding-team-local/coding-team/1.0.0'
 for name, settings in expected.items():

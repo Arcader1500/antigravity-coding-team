@@ -15,13 +15,15 @@ function Remove-CodeReviewGraphHooks {
     # Older installs wrote a hook per tool call and a status hook that exited 1
     # in unindexed repos. Keep unrelated user hooks, replace only graph hooks.
     param($Hooks)
-    foreach ($event in @($Hooks.PSObject.Properties.Name)) {
-        $kept = @($Hooks.$event | Where-Object {
+    foreach ($property in @($Hooks.PSObject.Properties)) {
+        $event = $property.Name
+        if ([string]::IsNullOrEmpty($event)) { continue }
+        $kept = @($property.Value | Where-Object {
             $commands = @($_.hooks | ForEach-Object { $_.command; $_.commandWindows })
             -not ($commands -match 'code-review-graph')
         })
         if ($kept.Count -eq 0) { $Hooks.PSObject.Properties.Remove($event) }
-        else { $Hooks.$event = $kept }
+        else { $property.Value = $kept }
     }
 }
 function Remove-CodeReviewGraphMcpConfig {
@@ -97,7 +99,7 @@ foreach ($role in @('planner', 'orchestrator')) {
     $marker = "developer_instructions = '''"
     $raw = Get-Content "$PSScriptRoot/agents/$role.toml" -Raw -Encoding UTF8
     $body = $raw.Substring($raw.IndexOf($marker) + $marker.Length)
-    $text = "model = `"gpt-6-sol`"`nmodel_reasoning_effort = `"$effort`"`n$marker`n" + $body
+    $text = "model = `"gpt-6.1-sol`"`nmodel_reasoning_effort = `"$effort`"`n$marker`n" + $body
     if (Test-Path $profile) { Copy-Item $profile "$profile.backup-$(Get-Date -Format yyyyMMddHHmmss)" }
     # Write UTF-8 without BOM: Set-Content -Encoding utf8NoBOM is PowerShell 7 only.
     [System.IO.File]::WriteAllText($profile, $text, (New-Object System.Text.UTF8Encoding $false))

@@ -5,7 +5,7 @@ description: Plan a feature with a spec and critic, or execute an approved wave-
 
 Compatibility entry point: route planning requests to [team-plan](../team-plan/SKILL.md), approved-plan execution to [team-run](../team-run/SKILL.md), and review-only requests to [team-review](../team-review/SKILL.md). Read only the selected entry skill. Infer the mode from the request when clear; ask only when the requested outcome is ambiguous.
 
-Main chat model settings are selected in the composer or at CLI startup. For planning choose GPT-6 Sol / high; for orchestration choose GPT-6 Sol / low. A skill cannot change the current chat's model. Do not silently substitute a different model if the requested model is unavailable.
+Main chat model settings are selected in the composer or at CLI startup. For planning choose GPT-6.1 Sol / medium; for orchestration choose GPT-6.1 Sol / low. A skill cannot change the current chat's model. Do not silently substitute a different model if the requested model is unavailable.
 
 Delegate using registered agent_type="researcher", "plan-critic", "implementer", "code-reviewer", "verifier" or "devops-expert" as appropriate. Each role's TOML supplies its model, effort and instructions. Do not paste role prompts or duplicate model overrides; give focused task context, wait for results and report unavailable roles rather than substituting generic workers. Pause for spec approval before planning. After critic READY, stop for manual handoff; the user's explicit handoff authorizes execution without a separate plan-approval gate. Carry existing approvals forward.
 

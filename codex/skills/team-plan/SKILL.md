@@ -3,7 +3,7 @@ name: team-plan
 description: Start Coding Team planning for a feature, producing an approved spec and a critic-checked implementation plan.
 ---
 
-Read [planner.toml](../../agents/planner.toml) and use it as the main chat's planning workflow. This selects behavior, not the current model: recommend GPT-6 Sol / high in the composer, or the coding-team-planner CLI profile. State a mismatch if visible; do not claim to switch models.
+Read [planner.toml](../../agents/planner.toml) and use it as the main chat's planning workflow. This selects behavior, not the current model: recommend GPT-6.1 Sol / medium in the composer, or the coding-team-planner CLI profile. State a mismatch if visible; do not claim to switch models.
 
 Clarify material requirements, delegate scoped exploration using registered agent_type="researcher", and write the design spec. Obtain spec approval before task decomposition. Then use writing-plans and registered agent_type="plan-critic". Carry existing approvals forward. After critic READY, present the plan path and stop for the user's manual handoff to $team-run. That handoff itself authorizes execution; do not add a separate plan-approval question. Never implement application code in this workflow.
 

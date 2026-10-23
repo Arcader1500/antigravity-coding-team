@@ -22,14 +22,14 @@ orchestrator commits task changes.
 
 | Agent | Responsibility | Codex model / effort |
 |---|---|---|
-| planner | Requirements, spec and plan | GPT-6 Sol / high |
-| plan-critic | Critique plan against spec | GPT-6 Sol / high |
+| planner | Requirements, spec and plan | GPT-6.1 Sol / medium |
+| plan-critic | Critique plan against spec | GPT-6.1 Sol / medium |
 | researcher | Scoped read-only exploration | GPT-6 Luna / low |
-| orchestrator | Dispatch, progress and commits | GPT-6 Sol / low |
-| implementer | One scoped implementation task | GPT-6 Sol / medium |
-| code-reviewer | Diff review and verdict | GPT-6 Sol / high |
+| orchestrator | Dispatch, progress and commits | GPT-6.1 Sol / low |
+| implementer | One scoped implementation task | GPT-6 Luna / medium |
+| code-reviewer | Diff review and verdict | GPT-6.1 Sol / medium |
 | verifier | Tests, lint, typecheck and build evidence | GPT-6 Luna / low |
-| devops-expert | Kubernetes, Terraform, CI/CD and cloud specialist | GPT-6 Sol / medium |
+| devops-expert | Kubernetes, Terraform, CI/CD and cloud specialist | GPT-6 Luna / medium |
 
 Both plugins bundle `code-review-graph` MCP configuration. Its executable must
 be installed and available on PATH to use graph tools. Graph readiness is required before worker dispatch; the orchestrator repairs
@@ -85,13 +85,13 @@ profiles are backed up. Run the same installer after edits to refresh the cache.
 
 Start a new chat after installation; restart Codex if the skill list is stale.
 The `$` picker lists **skills**, while agents are delegation targets.
-For planning, select **GPT-6 Sol / High** in the desktop composer and send:
+For planning, select **GPT-6.1 Sol / Medium** in the desktop composer and send:
 
 ```text
 $team-plan Plan this feature: [your requirements].
 ```
 
-After approving the plan, start a fresh chat with **GPT-6 Sol / Low** and send:
+After approving the plan, start a fresh chat with **GPT-6.1 Sol / Low** and send:
 
 ```text
 $team-run Execute the approved plan at [plan path].

@@ -19,19 +19,19 @@ compatibility entry point that routes to the appropriate workflow.
 
 | Role | Model | Reasoning |
 |---|---|---|
-| planner | gpt-6-sol | high |
-| plan-critic | gpt-6-sol | high |
+| planner | gpt-6-luna | high |
+| plan-critic | gpt-6.1-sol | medium |
 | researcher | gpt-6-luna | low |
-| orchestrator | gpt-6-sol | low |
-| implementer | gpt-6-sol | medium |
-| code-reviewer | gpt-6-sol | high |
+| orchestrator | gpt-6.1-sol | low |
+| implementer | gpt-6-luna | medium |
+| code-reviewer | gpt-6.1-sol | medium |
 | verifier | gpt-6-luna | low |
-| devops-expert | gpt-6-sol | medium |
+| devops-expert | gpt-6-luna | medium |
 
 All eight native custom agents are installed under `~/.codex/agents/` for use across projects. They inherit session permissions.
 Read-only role instructions do not establish a separate read-only sandbox.
 
-For main-chat roles, select GPT-6 Sol and the listed effort in the desktop
+For main-chat roles, select GPT-6.1 Sol and the listed effort in the desktop
 composer, then invoke `$team-plan` or `$team-run` respectively.
 The skill cannot change the current chat's model. CLI launch profiles:
 
