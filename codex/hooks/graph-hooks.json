@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$(git rev-parse --show-toplevel 2>/dev/null)\" || exit 0; [ -f .code-review-graph/graph.db ] || exit 0; code-review-graph status 2>/dev/null || true; exit 0",
+            "commandWindows": "$root = git rev-parse --show-toplevel 2>$null; if ($root -and (Test-Path (Join-Path $root '.code-review-graph/graph.db'))) { code-review-graph status 2>$null }; exit 0",
+            "timeout": 10,
+            "statusMessage": "Checking code-review-graph status"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -47,10 +47,27 @@ MCP access to the intended repository; setup failures block dispatch. Source
 inspection confirms critical claims and covers unindexed content. See
 [graph preflight](skills/subagent-driven-development/references/code-review-graph.md).
 
-If Codex warns that `mcp_servers.code-review-graph.type` is ignored, remove the
-`type` line from that existing user `config.toml` table. Native Codex TOML uses
-`command` and `args` for stdio, or `url` for HTTP; do not copy transport metadata
-from a different client's JSON format. An existing manual stdio entry would use:
+The installer also writes one advisory `SessionStart` hook to
+`~/.codex/hooks.json`: it prints graph status only when the checkout has a
+`.code-review-graph/graph.db`, and always exits 0, so an unindexed repository
+cannot fail session startup. Older per-tool graph hooks are removed; graph
+updates stay in the repository's git `post-commit` hook, so Codex never
+rebuilds the graph in the middle of a wave. Other user hooks are preserved and
+both files are backed up. Windows uses `commandWindows`, macOS/Linux uses the
+POSIX `command`. Codex runs `commandWindows` as PowerShell code, so it must be
+plain PowerShell: a nested `powershell.exe -Command "..."` gets its variables
+expanded by the outer shell and the hook fails. The running app-server daemon
+reads `hooks.json` once at startup, so restart Codex (`codex app-server daemon
+restart`) after installing. Codex skips changed hooks until you review them:
+run `/hooks` after installing, or the hook will not run.
+
+If Codex reports `mcp_servers.code-review-graph` with an invalid transport, or
+warns that `mcp_servers.code-review-graph.type` is ignored, remove the complete
+`[mcp_servers.code-review-graph]` block from the user `config.toml`, including
+any `.tools.*` sub-tables. A partial edit leaves orphaned sub-tables and Codex
+then rejects the whole bootstrap config. Native Codex TOML uses `command` and
+`args` for stdio, or `url` for HTTP; do not copy transport metadata from a
+different client's JSON format. An existing manual stdio entry would use:
 
 ```toml
 [mcp_servers.code-review-graph]
@@ -59,7 +76,8 @@ args = ["serve"]
 ```
 
 The plugin already supplies this server; do not add a second registration just
-to fix the warning. An ignored setting and a startup timeout are separate issues:
+to fix the warning. The installer removes a stale user block automatically and
+backs up the file. An ignored setting and a startup timeout are separate issues:
 verify the configured executable and MCP handshake if startup still fails. See
 the [official Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 

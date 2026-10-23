@@ -12,12 +12,15 @@ rebuild or repair the graph while wave writers are active.
    `code-review-graph serve` in `.mcp.json`; avoid duplicate registrations. If a
    restart is needed to expose MCP tools, report it and stop before dispatch.
    Do not broaden permissions or install unrelated project dependencies.
-   If Codex reports an ignored `mcp_servers.code-review-graph.type` setting in
-   user `config.toml`, remove only that unsupported key from the existing table.
-   Native TOML stdio configuration uses `command` and `args`; HTTP uses `url`.
-   Do not copy JSON transport metadata into native TOML or create a duplicate
-   user registration for the plugin-managed server. Check the configured command
-   separately if startup still times out; removing `type` does not prove readiness.
+   If Codex reports an invalid transport or an ignored
+   `mcp_servers.code-review-graph.type` setting in user `config.toml`, remove the
+   complete `[mcp_servers.code-review-graph]` block, including `.tools.*`
+   sub-tables. A partial edit leaves orphaned tables and Codex rejects the
+   bootstrap config. Native TOML stdio configuration uses `command` and `args`;
+   HTTP uses `url`. Do not copy JSON transport metadata into native TOML or
+   create a duplicate user registration for the plugin-managed server. Check the
+   configured command separately if startup still times out; removing `type`
+   does not prove readiness.
 3. Ensure `.code-review-graph/` is ignored before building. If the index is missing,
    run `code-review-graph build --repo <absolute root>` and check its exit status.
    Otherwise inspect status/freshness and use
