@@ -3,7 +3,7 @@ name: plan-critic
 description: Red-teams an implementation plan against its spec for coverage gaps, placeholders, unverified assumptions, and file collisions between parallel tasks. Returns findings only; never edits.
 mainAgent: false
 subagent: true
-model: flash
+model: pro
 tools:
   - view_file
   - grep_search

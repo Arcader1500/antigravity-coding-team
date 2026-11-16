@@ -38,3 +38,56 @@ Only after reviewer approval, dispatch verifier for full relevant project tests,
 If verification fails, orchestrator dispatches implementer fixes, obtains code-reviewer approval of the changes, then returns to verifier for affected checks and final relevant coverage. Repeat until review is approved and required verification passes; do not declare completion while either fails. Reuse verifier evidence only when code, dependencies, configuration, environment, commands and scope remain unchanged. Evidence before the required post-review verifier stage cannot skip that stage.
 
 Report final review verdict, verifier commands/exit codes/coverage, commits and limitations. Resolve NEEDS_CONTEXT or concrete BLOCKED causes rather than retrying unchanged. Never push, merge or delete branches without authorization.
+
+## Risk-estimator state and observed timing
+
+Resolve the run ID, local state path, artifact identities and latest prediction
+revision from the planner's persisted handoff or its explicit unpersisted fallback.
+The database belongs under `.coding-team/risk.sqlite3` in the handed-off target
+repository, never in a plugin cache or graph database. Before resume, use the
+bundled helper's `artifact_identity` contract to verify the current plan/spec
+SHA-256 values. Reject stale associations. A changed plan/spec goes through the
+existing planner/critic process and manual handoff, then starts a new run linked
+with `previous_run_id`. A changed environment with stable artifacts can append a
+prediction revision to the current run. Preserve the baseline prediction.
+
+The controller is the sole state writer. Use `risk_store.py`'s schema-v1
+`create-run`, `record`, `show`, and `import-jsonl` operations and stable record IDs.
+Immediately before each task-attempt dispatch, append an `attempt_start` event
+with the task, attempt, configured model/reasoning when known, UTC `start_time`,
+null `end_time` and `elapsed_seconds`, running status, controller-clock
+provenance, empty `known_waits`, and null/unknown `active_seconds`. Upon each
+individual completion message, immediately append a separate `attempt_end` event
+with a distinct ID, the same start, observed UTC end, computed controller
+dispatch-to-result elapsed seconds, status/checks and only measured waits. Store
+worker-reported timing separately with its provenance; absent timings remain
+null. Record an earlier completion without waiting for the rest of its wave, but
+do not inspect worker edits until every writer in that wave has completed. Retries
+and fixes use new attempt numbers and records; never overwrite failed attempts.
+
+When SQLite is not ready, bootstrap an append-only `.coding-team/task-timings.jsonl`
+in the target repo using a `create-run` envelope followed by ordered `record`
+envelopes matching the helper. Replay via `import-jsonl` when it is available,
+keep the bootstrap file, and continue through the helper. On persistence failure,
+retain the operation in JSONL and surface the error; do not claim it was stored.
+Retry with the same IDs. Preserve/import an existing legacy `run_start` line using
+the helper's compatibility handling.
+
+Log review and verifier dispatch/results as separate stages, including each
+review/fix iteration and verification rerun. Append final implementation/check
+outcome separately from human/live acceptance; leave acceptance pending or
+unavailable until evidence supports a later outcome. Compare predictions with
+measured attempt sums, and report whole-run wall time from first task dispatch to
+the final required result separately because parallel tasks overlap. Do not infer
+unobserved phases from the forecast.
+
+Consult the estimator only for material new evidence such as a repeated failed
+fix, symptoms that may share a contract cause, an unexpected external dependency,
+live behavior diverging from checks, or material integration changes. Routine
+completion only logs an event. The controller gathers answers; worker reporting
+and no-delegation contracts remain unchanged. Store incidents with symptoms,
+attempts, affected tasks, links/evidence and cause status `unknown`,
+`hypothesized`, or `confirmed`; group symptoms under a shared cause only when
+evidence warrants it. Reassessment cites baseline/current revisions, observed
+time/provenance and remaining predicted time, then appends a revision without
+replacing prior estimates. This adds no approval gate or fixed trigger.

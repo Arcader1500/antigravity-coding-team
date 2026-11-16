@@ -76,3 +76,59 @@ ownership require controller coordination.
 Use configured role models; this skill does not change model allocation. Continue
 through the approved plan without routine check-ins; stop for unresolved blockers
 or decisions needed to preserve user intent.
+
+## Risk-estimator state and observed timing
+
+Resolve the run ID, state path, artifact identities and latest prediction revision
+from the planner's persisted handoff or its explicit same-directory unpersisted
+fallback. Store state in `.coding-team/risk.sqlite3` under the handed-off target
+repository, never in a plugin cache or graph database. On resume, recompute the
+plan/spec SHA-256 identities with the packaged helper's `artifact_identity`
+contract. Reject stale associations. A changed plan/spec returns through the
+existing planner/critic process and manual handoff, then starts a new run with
+`previous_run_id` pointing to the prior run in the same repo. A material
+environment change with unchanged artifacts can append a revision to the same
+run; preserve the baseline.
+
+The orchestrator is the sole state writer. Follow the packaged `risk_store.py`
+schema-v1 CLI (`create-run`, `record`, `show`, `import-jsonl`) and stable record
+IDs. Before each asynchronous implementer invocation, append an `attempt_start`
+event with task ID, attempt, configured model/reasoning when known, UTC system
+clock start, null end/duration, running status, controller-clock provenance,
+empty known waits and null/unknown active time. On each individual completion
+message, append a separate `attempt_end` event immediately with a different ID,
+the same start, observed end, computed dispatch-to-result elapsed seconds, actual
+status/checks and only measured waits. Do not wait for later wave completions to
+timestamp an earlier result. These controller timings include tool/check time,
+queueing and result delivery; they are not active model time. Preserve any
+worker-reported times/effort separately with provenance; otherwise keep them
+null. Retries/fixes get new attempt numbers and records; retain failed attempts.
+Continue to respect the existing writer barrier: do not inspect worker edits or
+start final gates while a writer remains active.
+
+Before SQLite is ready, create append-only `.coding-team/task-timings.jsonl` in
+the target repository with an ordered `create-run` operation followed by
+`record` operations matching the helper. Replay with `import-jsonl` when
+available, retain the bootstrap file, then continue through the helper. On a
+write failure, retain the operation in JSONL and surface the error without
+claiming persistence; retry with the same IDs. Preserve legacy `run_start` input
+through the helper's compatibility handling.
+
+Record review and verifier starts/results separately, including each review/fix
+iteration and verifier rerun. Append an outcome with implementation/check status
+separate from `human_live_acceptance`; leave later acceptance pending/unavailable
+until evidence arrives. Compare estimates with per-task sums across attempts and
+report whole-run wall time from first dispatch to final required result
+separately, because wave tasks can overlap. Never infer missing phase timing.
+
+Consult the estimator for materially new evidence only: a repeated failed fix,
+symptoms suggesting a shared contract mismatch, an unexpected external
+dependency, live behavior diverging from checks, or a material integration
+change. Routine completion is an event only. The orchestrator gathers answers;
+implementers keep their current reporting and no-delegation rules. Incident
+records use the helper's required symptom, affected-task, failed-attempt, related
+incident, evidence and next-diagnostic fields. Keep cause status unknown or
+hypothesized without evidence; confirmed causes require evidence. Reassessment
+references baseline/current revisions and separately states observed time and
+remaining predicted time, appending rather than replacing the prediction. This
+workflow creates no extra approval gate or fixed reassessment threshold.

@@ -24,3 +24,14 @@ are unavailable, report the limitation before choosing another approach.
 Finish with bundled
 [finishing-a-development-branch](../finishing-a-development-branch/SKILL.md),
 preserving user authorization for branch disposition. Never retry unchanged blockers.
+
+For an estimator run, resume from the run ID, state path and artifact fingerprints
+in the planner's persisted handoff or its explicit unpersisted fallback. Recompute
+the current plan/spec fingerprints before dispatch and reject stale associations.
+A changed plan/spec follows the existing planner/critic process and manual
+handoff, then creates a linked run; environment changes with stable artifacts
+append a prediction revision. Follow the helper's schema-v1 CLI and timing,
+incident and reassessment contracts in
+[subagent-driven-development](../subagent-driven-development/SKILL.md). Log each
+attempt dispatch and individual asynchronous result immediately while preserving
+wave writer barriers and the review/fix loop followed by final verification.

@@ -164,7 +164,9 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 ## Execution Handoff
 
-After plan-critic returns READY, provide the plan path for handoff to orchestrator.
+Before this handoff, consult registered `risk-estimator` after critic READY using exact plan/spec hashes, available critic findings, task/dependency and execution context. Preserve critic findings; answer estimator questions from supplied decisions/evidence or explicit unknowns, preserve question IDs, and bound the interview to three questions per reply and two rounds. A specific material uncertainty may be assessed provisionally before READY without implying approval. Persist run, consultation and revision-0 prediction through the packaged helper; `create-run <db-path>` accepts a run object and `record <db-path>` accepts a schema-version-1 record envelope on stdin. Target `<repo-root>/.coding-team/risk.sqlite3`. If helper persistence fails, report the bounded error and preserve the actual request/result in the planner's adjacent `.risk-handoff.json` using its atomic-write contract and `storage_status: not_persisted`; do not change the critic-approved plan. Add run ID, state path or fallback status, plan/spec identities, latest revision and unresolved risks to the existing handoff. Risk advice adds no approval checkpoint.
+
+After plan-critic returns READY and the estimator consultation/persistence or fallback is complete, provide the plan path for handoff to orchestrator.
 Use bundled `subagent-driven-development`, or `executing-plans` in a fresh session.
 Preserve required plan approval. Both entry points use the same wave, commit,
 review and verification contract; do not offer inline execution as a competing default.

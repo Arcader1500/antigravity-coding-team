@@ -27,9 +27,15 @@ compatibility entry point that routes to the appropriate workflow.
 | code-reviewer | gpt-6.1-sol | medium |
 | verifier | gpt-6-luna | low |
 | devops-expert | gpt-6-luna | medium |
+| risk-estimator | gpt-6.1-sol | medium |
 
-All eight native custom agents are installed under `~/.codex/agents/` for use across projects. They inherit session permissions.
+All nine native custom agents are installed under `~/.codex/agents/` for use across projects. They inherit session permissions.
 Read-only role instructions do not establish a separate read-only sandbox.
+
+The planner source agent remains `gpt-6-luna/high`. Its CLI launch profile
+intentionally selects `gpt-6.1-sol/medium` for the main chat; that profile does
+not rewrite the native agent source model. The code-reviewer source is
+`gpt-6.1-sol/medium`; session-specific model choices may differ.
 
 For main-chat roles, select GPT-6.1 Sol and the listed effort in the desktop
 composer, then invoke `$team-plan` or `$team-run` respectively.
@@ -97,6 +103,34 @@ bearer_token_env_var = "CONTEXT7_API_KEY"
 ```
 
 Keep a single `context7` entry so the MCP list has no duplicates.
+
+## Risk-estimator storage
+
+The packaged `scripts/risk_store.py` helper uses Python 3.11+ and the standard
+library. It stores durable history in the target project's
+`.coding-team/risk.sqlite3`, outside the installed plugin cache. Planner
+consultations and evidence, immutable prediction revisions, incidents,
+execution events and outcomes are appended through the helper. The planner
+includes the run ID, artifact fingerprints, state path and latest prediction in
+the existing handoff; the orchestrator resumes that run and records execution
+evidence. A revised plan gets a linked run, while later outcomes append to the
+original run.
+
+The controller starts timing at task dispatch using the system clock and records
+each attempt's result as it arrives. Until SQLite is available, ordered
+create-run/record envelopes are appended to `.coding-team/task-timings.jsonl`;
+`import-jsonl` replays them in order and accepts repeated imports. A legacy
+`run_start` line is preserved and reported. Controller dispatch-to-result timing
+is elapsed wall time, not active model effort; queue, human and external waits
+remain separately identified or null when unknown. Human/live acceptance can
+be appended later without replacing implementation completion or earlier
+outcomes. Estimates remain heuristic; rubric review is not scheduled or
+automated and happens only when the user chooses.
+
+Run `py -3 .\scripts\risk_store.py --help` from the `codex` directory for
+helper commands. `py -3 .\scripts\validate.py --source-only` validates source
+without reading global configuration; `--installed-parity` explicitly compares
+installed agents, launch profiles and the plugin cache after installation.
 
 ## Changes made for Codex
 

@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "rubric_version": "1",
+  "consultation_id": "risk-estimator-prototype-2026-11-16-01",
+  "run_id": "prompt-trial-risk-estimator-2026-11-16",
+  "revision": 0,
+  "previous_revision": null,
+  "mode": "estimate",
+  "status": "assessed",
+  "provisional": true,
+  "critic_status": "READY",
+  "storage_status": "not_persisted",
+  "basis": {
+    "artifacts": [
+      {
+        "path": "docs/superpowers/plans/2026-11-16-risk-estimator-plan.md",
+        "sha256": "c53fb47e28bebe12b9272ef426239b20009740acb32bc287d82b2a659bc6dc2f"
+      },
+      {
+        "path": "docs/audits/risk-estimator-assessment-2026-11-16.md",
+        "sha256": "d082d10f4e07e4378023380499608ef0a4a625dcb0d2abc931f2ce77654f1148"
+      },
+      {
+        "path": "codex/agents/risk-estimator.toml",
+        "sha256": "8a123b93e8c4a6628318b05d087a33c7182eafc77d1f4ce573a692e42a10036c"
+      }
+    ],
+    "fingerprint_provenance": "Supplied request identities; artifact contents read, hashes not independently recomputed.",
+    "evidence_references": [
+      "docs/audits/risk-estimator-trial-2026-11-16-request.json",
+      "plan: Architecture and contracts, T2-T6, Execution Waves, Final review and verification",
+      "assessment: Prediction and measurement, Persistence, Workflow integration",
+      "request: critic F1-F4 resolved; /root/risk_plan_critic READY report"
+    ],
+    "platform": "Codex on Windows PowerShell; working py -3 launcher, Python 3.11+",
+    "execution_models": {
+      "orchestrator": {"model": "gpt-6.1-sol", "reasoning_effort": "low"},
+      "implementer": {"model": "gpt-6-luna", "reasoning_effort": "medium"},
+      "code-reviewer": {"model": "gpt-6.1-sol", "reasoning_effort": "medium"},
+      "verifier": {"model": "gpt-6-luna", "reasoning_effort": "low"}
+    },
+    "evaluator": {"model": "gpt-6.1-sol", "reasoning_effort": "medium"},
+    "available_worker_capacity": 2,
+    "excluded_task_ids": ["T1"],
+    "scope": "Remaining T2-T6 and existing shared final gates; no implementation observations collected."
+  },
+  "questions": [],
+  "tasks": [
+    {
+      "task_id": "T2",
+      "agentic_complexity": "high",
+      "integration_uncertainty": "medium",
+      "defect_exposure": "high",
+      "debugging_cost": "medium",
+      "rationale": "Plan T2 combines run identity, append-only revisions, idempotency, rollback, cross-record references and timing validation. Local SQLite fixtures permit deterministic diagnosis; the new schema and two packaged copies still interact.",
+      "phase_minutes": {
+        "implementation": {"optimistic": 25, "likely": 40, "conservative": 65},
+        "debugging": {"optimistic": 5, "likely": 25, "conservative": 55},
+        "self_review": {"optimistic": 5, "likely": 10, "conservative": 15},
+        "task_checks": {"optimistic": 10, "likely": 15, "conservative": 25}
+      },
+      "agent_minutes": {"optimistic": 45, "likely": 90, "conservative": 160},
+      "risk_ids": ["R1", "R2"]
+    },
+    {
+      "task_id": "T3",
+      "agentic_complexity": "medium",
+      "integration_uncertainty": "medium",
+      "defect_exposure": "medium",
+      "debugging_cost": "medium",
+      "rationale": "Plan T3 updates planning entry points across both formats and adds a narrowly permitted atomic fallback with conflict semantics. Tabletop checks can expose instruction conflicts, but do not prove fresh-session behavior.",
+      "phase_minutes": {
+        "implementation": {"optimistic": 12, "likely": 22, "conservative": 35},
+        "debugging": {"optimistic": 2, "likely": 6, "conservative": 15},
+        "self_review": {"optimistic": 3, "likely": 5, "conservative": 8},
+        "task_checks": {"optimistic": 3, "likely": 7, "conservative": 12}
+      },
+      "agent_minutes": {"optimistic": 20, "likely": 40, "conservative": 70},
+      "risk_ids": ["R2", "R3"]
+    },
+    {
+      "task_id": "T4",
+      "agentic_complexity": "high",
+      "integration_uncertainty": "medium",
+      "defect_exposure": "high",
+      "debugging_cost": "medium",
+      "rationale": "Plan T4 spans resume, revised plans versus environment revisions, writer barriers, incident attribution and timing provenance across controller instructions. Broad shared semantics have weaker behavioral observability than the logger's deterministic fixtures.",
+      "phase_minutes": {
+        "implementation": {"optimistic": 15, "likely": 25, "conservative": 40},
+        "debugging": {"optimistic": 3, "likely": 8, "conservative": 20},
+        "self_review": {"optimistic": 3, "likely": 5, "conservative": 8},
+        "task_checks": {"optimistic": 4, "likely": 7, "conservative": 12}
+      },
+      "agent_minutes": {"optimistic": 25, "likely": 45, "conservative": 80},
+      "risk_ids": ["R2", "R3", "R5"]
+    },
+    {
+      "task_id": "T5",
+      "agentic_complexity": "medium",
+      "integration_uncertainty": "medium",
+      "defect_exposure": "medium",
+      "debugging_cost": "medium",
+      "rationale": "Plan T5 separates source expectations from launch profiles and installed parity while checking independently packaged helpers. The supplied baseline already has a planner expectation mismatch; source-only validation avoids dependence on global installation state.",
+      "phase_minutes": {
+        "implementation": {"optimistic": 12, "likely": 22, "conservative": 35},
+        "debugging": {"optimistic": 4, "likely": 8, "conservative": 20},
+        "self_review": {"optimistic": 3, "likely": 5, "conservative": 8},
+        "task_checks": {"optimistic": 6, "likely": 10, "conservative": 17}
+      },
+      "agent_minutes": {"optimistic": 25, "likely": 45, "conservative": 80},
+      "risk_ids": ["R4"]
+    },
+    {
+      "task_id": "T6",
+      "agentic_complexity": "medium",
+      "integration_uncertainty": "medium",
+      "defect_exposure": "medium",
+      "debugging_cost": "medium",
+      "rationale": "Plan T6 exercises a multi-record lifecycle with resume, immutable revisions, shared incidents, failed outcomes and parallel accounting. Fixtures are reproducible, but mismatches can originate in the logger or workflow contracts.",
+      "phase_minutes": {
+        "implementation": {"optimistic": 12, "likely": 22, "conservative": 38},
+        "debugging": {"optimistic": 4, "likely": 10, "conservative": 25},
+        "self_review": {"optimistic": 3, "likely": 5, "conservative": 7},
+        "task_checks": {"optimistic": 6, "likely": 8, "conservative": 15}
+      },
+      "agent_minutes": {"optimistic": 25, "likely": 45, "conservative": 85},
+      "risk_ids": ["R1", "R3", "R5"]
+    }
+  ],
+  "shared_gates": {
+    "independent_review": {"optimistic": 15, "likely": 25, "conservative": 45},
+    "final_verification": {"optimistic": 10, "likely": 20, "conservative": 35},
+    "assumptions": [
+      "Existing full-change reviewer/fix loop followed by final verifier; reviewer and verifier rechecks are included here.",
+      "All source fixes, including fixes prompted by final review or verification, are charged to affected task debugging, not duplicated here.",
+      "Optimistic assumes straightforward approval; likely allows a bounded correction cycle; conservative allows several related corrections and rechecks.",
+      "Checks include tool runtime. No installed-state mutation, live deployment validation or additional gates."
+    ]
+  },
+  "totals": {
+    "agent_work_minutes": {"optimistic": 165, "likely": 310, "conservative": 555},
+    "agent_elapsed_minutes": {"optimistic": 145, "likely": 270, "conservative": 485},
+    "human_minutes": null,
+    "external_wait_minutes": null,
+    "scheduling_assumptions": [
+      "Task work sums to 140/265/475 minutes; shared gates add 25/45/80.",
+      "With two worker slots, schedule T2 -> concurrent T3,T4 -> T5 -> T6 -> review -> verifier.",
+      "Elapsed calculation is T2 + max(T3,T4) + T5 + T6 + shared gates; pre-gate elapsed is 120/225/405.",
+      "Scenarios pair coherent conditions across tasks; correlated contract corrections are included in phase ranges without an extra blanket contingency.",
+      "Assume focused agent execution and immediate dispatch with no queue or human pauses. Brief controller handling is absorbed into task investigation/check time; a separate controller duration is not measured.",
+      "No provisioning is required, but unavailable external-wait and human-effort measurements remain null.",
+      "Forecast excludes completed T1, this consultation and collecting 30-50 future runs."
+    ]
+  },
+  "risks": [
+    {
+      "risk_id": "R1",
+      "category": "record-integrity",
+      "affected_tasks": ["T2", "T6"],
+      "evidence": "Plan T2 requires idempotent retries, rollback, predecessor/revision validation, finite durations and immutable history; T6 combines them.",
+      "cause_status": "hypothesized",
+      "root_cause_hypothesis": "Validation and transactional insertion may disagree on identity or relationship semantics.",
+      "consequences": "Rejected valid continuations, duplicate records or altered baselines; concentrated logger debugging.",
+      "next_diagnostic": "Run the specified temporary-SQLite identity, conflict, rollback and revision-link cases before lifecycle integration."
+    },
+    {
+      "risk_id": "R2",
+      "category": "handoff-contract",
+      "affected_tasks": ["T2", "T3", "T4"],
+      "evidence": "Resolved critic F2-F4 specify create_run, fallback conflict handling and predecessor links; consumers must use those exact contracts.",
+      "cause_status": "hypothesized",
+      "root_cause_hypothesis": "Parent instructions may construct a payload or retry path inconsistent with helper validation.",
+      "consequences": "Cross-session resume or persistence fails across several consumers from one shared mismatch.",
+      "next_diagnostic": "Compare one complete baseline, fallback retry and revised-plan handoff against the implemented helper contract."
+    },
+    {
+      "risk_id": "R3",
+      "category": "workflow-semantics",
+      "affected_tasks": ["T3", "T4", "T6"],
+      "evidence": "Plan requires coordinated role/skill changes while preserving restricted writes, critic ownership and existing review cadence.",
+      "cause_status": "hypothesized",
+      "root_cause_hypothesis": "One entry point may retain legacy instructions that conflict with the new consultation or logging sequence.",
+      "consequences": "Inconsistent consultation, unauthorized write attempts or lost context on resume.",
+      "next_diagnostic": "Use the planned persistence-failure, repeated-failure and fresh-session table­tops across both instruction formats."
+    },
+    {
+      "risk_id": "R4",
+      "category": "validation-and-packaging",
+      "affected_tasks": ["T5"],
+      "evidence": "Request reports a pre-existing installed-parity validator failure at planner model expectations; T5 separates source/profile/installed policies.",
+      "observed_symptoms": ["Supplied baseline validator fails at the planner model expectation mismatch."],
+      "cause_status": "confirmed",
+      "root_cause_hypothesis": "Existing validator expectations conflate source-role and launch-profile model policy, as documented in the supplied assessment.",
+      "consequences": "Validation remains blocked or reports misleading parity unless those policies are separated.",
+      "next_diagnostic": "Run T5 source-only model/profile checks and packaged-resource tests; keep installed parity explicitly unrun."
+    },
+    {
+      "risk_id": "R5",
+      "category": "measurement-validity",
+      "affected_tasks": ["T4", "T6"],
+      "evidence": "Assessment states no structured per-phase instrumentation exists; plan distinguishes controller elapsed, reported effort, null timing and later acceptance.",
+      "cause_status": "hypothesized",
+      "root_cause_hypothesis": "Workflow records may label elapsed time as active effort or fixture completion as live acceptance.",
+      "consequences": "History appears complete while supporting misleading manual calibration.",
+      "next_diagnostic": "Inspect null-timing, parallel-accounting and delayed-acceptance fixtures plus the manual review protocol for explicit provenance."
+    }
+  ],
+  "unknowns": [
+    "No implementation observations calibrate these task durations or model-specific retry costs.",
+    "The number and severity of final review findings remain unknown; scenario allowances are heuristic.",
+    "Tabletop and fixture checks cannot establish native role registration, installed parity or live cross-session compliance.",
+    "Future human effort and queue/external waits are unavailable; no material question is needed to forecast the bounded local scope."
+  ],
+  "revision_reason": null,
+  "calibration": {
+    "heuristic": true,
+    "historical_run_count": 0,
+    "manual_review_after_runs": [30, 50],
+    "automatic_updates": false
+  }
+}

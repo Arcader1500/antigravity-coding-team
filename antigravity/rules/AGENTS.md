@@ -23,6 +23,14 @@ context-triggered rules this bundle was extracted from are merged here.
 - No fake path literals: plan test snippets must use real paths (`process.execPath`, temp fixtures) rather than mock strings that bypass filesystem checks.
 - Do not implement until the user/supervisor approves the plan.
 
+### Planner risk-estimator state
+- After critic READY, the planner consults `risk-estimator` before the existing manual handoff; a specific material uncertainty may be assessed earlier as provisional. Keep critic verdict/findings intact and do not add an approval question.
+- Planner answers use supplied decisions/local evidence or explicit unknowns, preserve question IDs, and stop after at most three questions per reply and two interview rounds.
+- Only the active planner may use the packaged `risk_store.py` helper to write the target repository's `.coding-team/risk.sqlite3`. This does not grant any agent new application-file access or direct database/SQL access.
+- Before handoff, persist run identity, consultation and baseline prediction. Include run ID, state path, plan/spec artifact identities, latest prediction revision and unresolved risks in the existing handoff.
+- On persistence failure, the planner may atomically write a complete `docs/superpowers/plans/<plan-stem>.risk-handoff.json` using a same-directory temporary file. Include the actual request/result, run and consultation IDs, artifact hashes, `storage_status: not_persisted`, and bounded logging error; use redacted evidence references. A fallback for a different run is a conflict and must not be overwritten. Preserve the critic-approved plan and retry through helper idempotency; never claim durable logging when it failed.
+- Risk warnings do not change approval, critic, reviewer or verifier responsibilities or cadence.
+
 ## Coding standards
 - Delete before adding. Reuse existing helpers and patterns before writing new ones.
 - Never wrap missing or hallucinated symbols in `getattr()` fallback shims; use verified module signatures.

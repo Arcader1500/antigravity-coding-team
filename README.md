@@ -6,7 +6,7 @@ Each platform has an independent plugin, agent definitions, skills and installer
 ```text
 antigravity/              Antigravity plugin, agents, rules and eight skills
   install.bat/.ps1/.sh    Install or update using agy
-codex/                   Codex plugin, eight TOML agents and twelve skills
+codex/                   Codex plugin, nine TOML agents and twelve skills
   install.bat/.ps1        Install or update using Codex
   scripts/               Configuration validation
 .agents/plugins/         Local Codex marketplace pointing to ./codex
@@ -20,9 +20,9 @@ approval the orchestrator delegates implementation in dependency-ordered waves,
 with disjoint file ownership. Review and verification follow; only the
 orchestrator commits task changes.
 
-| Agent | Responsibility | Codex model / effort |
+| Agent | Responsibility | Codex source model / effort |
 |---|---|---|
-| planner | Requirements, spec and plan | GPT-6.1 Sol / medium |
+| planner | Requirements, spec and plan | GPT-6 Luna / high |
 | plan-critic | Critique plan against spec | GPT-6.1 Sol / medium |
 | researcher | Scoped read-only exploration | GPT-6 Luna / low |
 | orchestrator | Dispatch, progress and commits | GPT-6.1 Sol / low |
@@ -30,6 +30,11 @@ orchestrator commits task changes.
 | code-reviewer | Diff review and verdict | GPT-6.1 Sol / medium |
 | verifier | Tests, lint, typecheck and build evidence | GPT-6 Luna / low |
 | devops-expert | Kubernetes, Terraform, CI/CD and cloud specialist | GPT-6 Luna / medium |
+| risk-estimator | Advisory implementation-risk and AI-agent time forecasts | GPT-6.1 Sol / medium |
+
+The planner's native source role is GPT-6 Luna / high. Its separate CLI launch
+profile selects GPT-6.1 Sol / medium for the main chat; changing that profile
+does not rewrite the source agent model.
 
 Both plugins bundle `code-review-graph` MCP configuration. Its executable must
 be installed and available on PATH to use graph tools. Graph readiness is required before worker dispatch; the orchestrator repairs
@@ -79,7 +84,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1 -Validat
 ```
 
 The installer registers this repository's marketplace, installs/enables
-`coding-team`, copies eight agents into `~/.codex/agents/`, and installs planner
+`coding-team`, copies nine agents into `~/.codex/agents/`, and installs planner
 and orchestrator CLI profiles. Differing existing agent files and existing
 profiles are backed up. Run the same installer after edits to refresh the cache.
 
@@ -130,6 +135,29 @@ again. Completion requires both review approval and passing required verificatio
 Earlier task checks cannot replace the post-review verifier stage. Matching final
 verifier evidence may be reused only for unchanged code, commands and environment.
 
+### Risk forecasts and execution history
+
+After the plan critic returns READY, the planner may consult the risk-estimator
+for an advisory forecast and targeted evidence questions. The planner retains
+answers and the baseline prediction with the approved-plan handoff. During
+execution the orchestrator records task attempts, review and verification
+results, incidents and later human/live acceptance through the packaged SQLite
+helper. Forecasts do not change the critic verdict or add approval gates.
+
+Risk logging requires Python 3.11+ and stores project-local history in
+`.coding-team/risk.sqlite3`, outside the installed plugin cache. Before the
+helper is ready, the controller records ordered JSONL operations in
+`.coding-team/task-timings.jsonl` from system-clock dispatch/result observations;
+the helper can replay the file idempotently. The legacy `run_start` entry is
+preserved and reported. Controller dispatch-to-result time includes result
+delivery and any unobserved waits, so it is not labeled active agent effort.
+Missing phase measurements stay null; human pauses, external waits and
+human/live acceptance remain distinct from agent timing.
+
+Estimates are heuristic and history does not update the rubric automatically.
+Rubric inspection or revision is outside the workflow and happens only when
+the user chooses; earlier predictions remain available for comparison.
+
 ## Maintain and validate
 
 Edit `antigravity/` for Antigravity changes and `codex/` for Codex changes.
@@ -139,6 +167,8 @@ workflow changes consistent across both where appropriate.
 ```powershell
 agy plugin validate .\antigravity --strict
 powershell -NoProfile -ExecutionPolicy Bypass -File .\codex\install.ps1 -ValidateOnly
-# Deeper checks including installed-file parity (Python 3.11+; after installation):
-python .\codex\scripts\validate.py
+# Source-only checks (Python 3.11+; do not read global install state):
+py -3 .\codex\scripts\validate.py --source-only
+# Explicit installed-file parity check, after installation:
+py -3 .\codex\scripts\validate.py --installed-parity
 ```

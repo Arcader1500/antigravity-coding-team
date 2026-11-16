@@ -72,9 +72,10 @@ Then **restart `agy`** (or your Antigravity IDE session) — a newly installed o
 plugin.json                 manifest
 agents/                     orchestrator, planner (main) + implementer,
                             researcher, plan-critic, code-reviewer, verifier,
-                            devops-expert
+                            devops-expert, risk-estimator
 rules/AGENTS.md             merged operating rules (always on)
 skills/                     the 8 skills the agents reference
+scripts/risk_store.py       project-local SQLite history helper (Python 3.11+)
 permissions.sample.json     project-agnostic permission grants (not auto-loaded)
 ```
 
@@ -88,10 +89,53 @@ permissions.sample.json     project-agnostic permission grants (not auto-loaded)
 | `code-reviewer` | five-axis review + verdict | — |
 | `verifier` | runs tests/lint/build, reports evidence | — |
 | `devops-expert` | K8s/Helm/Terraform/CI-CD/cloud specialist; usable directly or as a subagent | — |
+| `risk-estimator` | advisory complexity, risk and AI-agent execution-time estimates | — |
 
 Bundled skills: `subagent-driven-development`, `grill-me`, `writing-plans`,
 `executing-plans`, `ponytail`, `verification-before-completion`,
 `finishing-a-development-branch`, `code-review-and-quality`.
+
+Requested subagent models and currently loadable frontmatter settings:
+
+| Agents | Requested model slug | Current `model` tier |
+|---|---|---|
+| `implementer`, `researcher`, `code-reviewer`, `verifier`, `risk-estimator` | `gemini-4-hydrogen-medium` | `flash` |
+| `plan-critic` | `gemini-4-argon-high` | `pro` |
+
+These slugs were verified with `agy models` and the
+[Antigravity CLI model reference](https://antigravity.google/docs/cli/headless/#select-a-model-effort-or-agent).
+However, `agy` 1.5.8 rejects full model slugs in custom-agent frontmatter with
+`Invalid model tier` and skips those agents. The
+[plugin frontmatter schema](https://antigravity.google/docs/build-plugins/#subagents)
+accepts tier names (`inherit`, `flash_lite`, `flash`, `pro`). The current settings
+keep the plugin loadable; they do not enforce the requested model/effort pins.
+Exact subagent pinning remains blocked by the loader's tier-only support.
+The `risk-estimator` uses the supported `flash` tier; this does not guarantee
+Hydrogen Medium or an exact reasoning-effort setting.
+Reinstall the plugin and restart Antigravity to load agent definition changes.
+
+## Risk estimates and project history
+
+After a READY plan critique, the planner can ask the risk-estimator for
+agent-time scenarios, evidence and focused questions. The planner keeps the
+answers and baseline prediction with the existing handoff. During execution the
+orchestrator resumes the linked run and records attempts, incidents, checks and
+later human/live acceptance. These forecasts are advisory and do not add an
+approval gate.
+
+Risk logging requires Python 3.11+ and uses the packaged standard-library
+`scripts/risk_store.py`. The database lives in the target project at
+`.coding-team/risk.sqlite3`, not in Antigravity's installed plugin directory.
+Before the helper is ready, the controller appends ordered system-clock
+create-run and record operations to `.coding-team/task-timings.jsonl`; the
+helper replays them idempotently and reports the legacy `run_start` entry.
+Controller dispatch-to-result time is elapsed wall time and may include
+unobserved waits; it is not labeled active agent effort. Unknown timing and
+human/external waits remain null or separately recorded. Human/live acceptance
+can be added later without replacing the implementation outcome.
+
+History does not automatically calibrate or revise the rubric. Rubric review is
+outside the execution workflow and happens only when the user chooses.
 
 ## Permissions
 
